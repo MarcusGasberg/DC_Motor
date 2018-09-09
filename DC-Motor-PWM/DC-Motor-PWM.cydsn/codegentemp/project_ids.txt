@@ -1,0 +1,7 @@
+C:\Users\mrgas\Downloads\DC-Motor-PWM\DC-Motor-PWM.cydsn\DC-Motor-PWM.cyprj|4e3b7493-d2f0-4e28-b5d7-e415e614fe9c
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|6e029d2a-70e0-4d0d-ac65-b6a04afb12d7
+C:\Users\mrgas\Documents\PSoC Creator\4.2\Downloads ( 4.2).cylib\Downloads ( 4.2).cyprj|e0f28ba2-0248-4ffe-9c66-29d567709529
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|5ba26373-3783-4878-b45c-61f34116248e
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|a204b1f0-09d2-4978-bb9e-0461570c20c8
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|e7a5e25c-8fe6-44ff-93a1-af82fb5024ef
+C:\Users\mrgas\Downloads\DC-Motor-PWM\Stepper Motor.cydsn\Stepper Motor.cyprj|43063ab9-04ab-449c-bddb-fb3bcc4d7489

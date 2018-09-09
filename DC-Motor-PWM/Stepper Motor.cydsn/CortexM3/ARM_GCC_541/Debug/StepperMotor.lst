@@ -1,0 +1,2959 @@
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"StepperMotor.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.initStepperMotor,"ax",%progbits
+  20              		.align	2
+  21              		.global	initStepperMotor
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	initStepperMotor, %function
+  25              	initStepperMotor:
+  26              	.LFB64:
+  27              		.file 1 "StepperMotor.c"
+   1:StepperMotor.c **** /* ========================================
+   2:StepperMotor.c ****  *
+   3:StepperMotor.c ****  * Copyright YOUR COMPANY, THE YEAR
+   4:StepperMotor.c ****  * All Rights Reserved
+   5:StepperMotor.c ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:StepperMotor.c ****  *
+   7:StepperMotor.c ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:StepperMotor.c ****  * WHICH IS THE PROPERTY OF your company.
+   9:StepperMotor.c ****  *
+  10:StepperMotor.c ****  * ========================================
+  11:StepperMotor.c **** */
+  12:StepperMotor.c **** #include "StepperMotor.h"
+  13:StepperMotor.c **** #include "project.h"
+  14:StepperMotor.c **** 
+  15:StepperMotor.c **** 
+  16:StepperMotor.c **** volatile uint8_t speed = 10; //The speed is controlled with a delay. Lower variable = Higher speed
+  17:StepperMotor.c **** volatile bool direction = true; //True if forward
+  18:StepperMotor.c **** volatile enum Drive currentDrive = None; //The Current drive
+  19:StepperMotor.c **** volatile uint32_t currentStep = 0;
+  20:StepperMotor.c **** 
+  21:StepperMotor.c **** 
+  22:StepperMotor.c **** void initStepperMotor(void)
+  23:StepperMotor.c **** {
+  28              		.loc 1 23 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 2
+
+
+  35              		.cfi_offset 14, -4
+  24:StepperMotor.c ****     Timer_1_Start();
+  36              		.loc 1 24 0
+  37 0002 FFF7FEFF 		bl	Timer_1_Start
+  38              	.LVL0:
+  39 0006 08BD     		pop	{r3, pc}
+  40              		.cfi_endproc
+  41              	.LFE64:
+  42              		.size	initStepperMotor, .-initStepperMotor
+  43              		.section	.text.increaseSpeed,"ax",%progbits
+  44              		.align	2
+  45              		.global	increaseSpeed
+  46              		.thumb
+  47              		.thumb_func
+  48              		.type	increaseSpeed, %function
+  49              	increaseSpeed:
+  50              	.LFB65:
+  25:StepperMotor.c **** }
+  26:StepperMotor.c **** 
+  27:StepperMotor.c **** 
+  28:StepperMotor.c **** void increaseSpeed(void)
+  29:StepperMotor.c **** {
+  51              		.loc 1 29 0
+  52              		.cfi_startproc
+  53              		@ args = 0, pretend = 0, frame = 0
+  54              		@ frame_needed = 0, uses_anonymous_args = 0
+  55              		@ link register save eliminated.
+  30:StepperMotor.c ****     if((--speed) < SPEEDMIN)
+  56              		.loc 1 30 0
+  57 0000 054A     		ldr	r2, .L5
+  58 0002 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  59 0004 013B     		subs	r3, r3, #1
+  60 0006 DBB2     		uxtb	r3, r3
+  61 0008 1370     		strb	r3, [r2]
+  62 000a 022B     		cmp	r3, #2
+  63 000c 02D8     		bhi	.L3
+  31:StepperMotor.c ****         speed = SPEEDMIN;
+  64              		.loc 1 31 0
+  65 000e 0322     		movs	r2, #3
+  66 0010 014B     		ldr	r3, .L5
+  67 0012 1A70     		strb	r2, [r3]
+  68              	.L3:
+  69 0014 7047     		bx	lr
+  70              	.L6:
+  71 0016 00BF     		.align	2
+  72              	.L5:
+  73 0018 00000000 		.word	.LANCHOR0
+  74              		.cfi_endproc
+  75              	.LFE65:
+  76              		.size	increaseSpeed, .-increaseSpeed
+  77              		.section	.text.decreaseSpeed,"ax",%progbits
+  78              		.align	2
+  79              		.global	decreaseSpeed
+  80              		.thumb
+  81              		.thumb_func
+  82              		.type	decreaseSpeed, %function
+  83              	decreaseSpeed:
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 3
+
+
+  84              	.LFB66:
+  32:StepperMotor.c **** }
+  33:StepperMotor.c **** 
+  34:StepperMotor.c **** void decreaseSpeed(void)
+  35:StepperMotor.c **** {
+  85              		.loc 1 35 0
+  86              		.cfi_startproc
+  87              		@ args = 0, pretend = 0, frame = 256
+  88              		@ frame_needed = 0, uses_anonymous_args = 0
+  89 0000 00B5     		push	{lr}
+  90              		.cfi_def_cfa_offset 4
+  91              		.cfi_offset 14, -4
+  92 0002 C1B0     		sub	sp, sp, #260
+  93              		.cfi_def_cfa_offset 264
+  36:StepperMotor.c ****     if((++speed) > SPEEDMAX)
+  94              		.loc 1 36 0
+  95 0004 0B4A     		ldr	r2, .L10
+  96 0006 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  97 0008 0133     		adds	r3, r3, #1
+  98 000a DBB2     		uxtb	r3, r3
+  99 000c 1370     		strb	r3, [r2]
+ 100 000e 192B     		cmp	r3, #25
+ 101 0010 02D9     		bls	.L8
+  37:StepperMotor.c ****         speed = SPEEDMAX;
+ 102              		.loc 1 37 0
+ 103 0012 1922     		movs	r2, #25
+ 104 0014 074B     		ldr	r3, .L10
+ 105 0016 1A70     		strb	r2, [r3]
+ 106              	.L8:
+  38:StepperMotor.c ****     char buffer[256];
+  39:StepperMotor.c ****     snprintf(buffer,sizeof(buffer),"Speed is %d \r\n", speed);
+ 107              		.loc 1 39 0
+ 108 0018 064B     		ldr	r3, .L10
+ 109 001a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 110 001c 064A     		ldr	r2, .L10+4
+ 111 001e 4FF48071 		mov	r1, #256
+ 112 0022 6846     		mov	r0, sp
+ 113 0024 FFF7FEFF 		bl	snprintf
+ 114              	.LVL1:
+  40:StepperMotor.c ****     UART_1_PutString(buffer);
+ 115              		.loc 1 40 0
+ 116 0028 6846     		mov	r0, sp
+ 117 002a FFF7FEFF 		bl	UART_1_PutString
+ 118              	.LVL2:
+  41:StepperMotor.c ****     
+  42:StepperMotor.c **** }
+ 119              		.loc 1 42 0
+ 120 002e 41B0     		add	sp, sp, #260
+ 121              		.cfi_def_cfa_offset 4
+ 122              		@ sp needed
+ 123 0030 5DF804FB 		ldr	pc, [sp], #4
+ 124              	.L11:
+ 125              		.align	2
+ 126              	.L10:
+ 127 0034 00000000 		.word	.LANCHOR0
+ 128 0038 00000000 		.word	.LC0
+ 129              		.cfi_endproc
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 4
+
+
+ 130              	.LFE66:
+ 131              		.size	decreaseSpeed, .-decreaseSpeed
+ 132              		.section	.text.stop,"ax",%progbits
+ 133              		.align	2
+ 134              		.global	stop
+ 135              		.thumb
+ 136              		.thumb_func
+ 137              		.type	stop, %function
+ 138              	stop:
+ 139              	.LFB67:
+  43:StepperMotor.c **** 
+  44:StepperMotor.c **** void stop(void)
+  45:StepperMotor.c **** {
+ 140              		.loc 1 45 0
+ 141              		.cfi_startproc
+ 142              		@ args = 0, pretend = 0, frame = 0
+ 143              		@ frame_needed = 0, uses_anonymous_args = 0
+ 144 0000 08B5     		push	{r3, lr}
+ 145              		.cfi_def_cfa_offset 8
+ 146              		.cfi_offset 3, -8
+ 147              		.cfi_offset 14, -4
+  46:StepperMotor.c ****     UART_1_PutString("Stop\r\n");
+ 148              		.loc 1 46 0
+ 149 0002 0248     		ldr	r0, .L14
+ 150 0004 FFF7FEFF 		bl	UART_1_PutString
+ 151              	.LVL3:
+ 152 0008 08BD     		pop	{r3, pc}
+ 153              	.L15:
+ 154 000a 00BF     		.align	2
+ 155              	.L14:
+ 156 000c 10000000 		.word	.LC1
+ 157              		.cfi_endproc
+ 158              	.LFE67:
+ 159              		.size	stop, .-stop
+ 160              		.section	.text.setStep,"ax",%progbits
+ 161              		.align	2
+ 162              		.global	setStep
+ 163              		.thumb
+ 164              		.thumb_func
+ 165              		.type	setStep, %function
+ 166              	setStep:
+ 167              	.LFB73:
+  47:StepperMotor.c ****     
+  48:StepperMotor.c **** }
+  49:StepperMotor.c **** 
+  50:StepperMotor.c **** 
+  51:StepperMotor.c **** void fullDrive(void)
+  52:StepperMotor.c **** {
+  53:StepperMotor.c ****     if (direction)
+  54:StepperMotor.c ****     {
+  55:StepperMotor.c ****         setStep(1,1,0,0);
+  56:StepperMotor.c ****         setStep(0,1,1,0);
+  57:StepperMotor.c ****         setStep(0,0,1,1);
+  58:StepperMotor.c ****         setStep(1,0,0,1);
+  59:StepperMotor.c ****     }
+  60:StepperMotor.c ****     else
+  61:StepperMotor.c ****     {
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 5
+
+
+  62:StepperMotor.c ****         setStep(1,0,0,1);
+  63:StepperMotor.c ****         setStep(0,0,1,1);
+  64:StepperMotor.c ****         setStep(0,1,1,0);
+  65:StepperMotor.c ****         setStep(1,1,0,0);
+  66:StepperMotor.c ****     }
+  67:StepperMotor.c **** }
+  68:StepperMotor.c **** 
+  69:StepperMotor.c **** void waveDrive(void)
+  70:StepperMotor.c **** {
+  71:StepperMotor.c ****     if (direction)
+  72:StepperMotor.c ****     {
+  73:StepperMotor.c ****         setStep(1,0,0,0);
+  74:StepperMotor.c ****         setStep(0,1,0,0);
+  75:StepperMotor.c ****         setStep(0,0,1,0);
+  76:StepperMotor.c ****         setStep(0,0,0,1);
+  77:StepperMotor.c ****     }
+  78:StepperMotor.c ****     else
+  79:StepperMotor.c ****     {
+  80:StepperMotor.c ****         setStep(0,0,0,1);
+  81:StepperMotor.c ****         setStep(0,0,1,0);
+  82:StepperMotor.c ****         setStep(0,1,0,0);
+  83:StepperMotor.c ****         setStep(1,0,0,0);
+  84:StepperMotor.c ****     }
+  85:StepperMotor.c **** }
+  86:StepperMotor.c **** 
+  87:StepperMotor.c **** void halfDrive(void)
+  88:StepperMotor.c **** {
+  89:StepperMotor.c ****     if (direction)
+  90:StepperMotor.c ****     {
+  91:StepperMotor.c ****         setStep(1,1,0,0);
+  92:StepperMotor.c ****         setStep(0,1,0,0);
+  93:StepperMotor.c ****         setStep(0,1,1,0);
+  94:StepperMotor.c ****         setStep(0,0,1,0);
+  95:StepperMotor.c ****         setStep(0,0,1,1);
+  96:StepperMotor.c ****         setStep(0,0,0,1);
+  97:StepperMotor.c ****         setStep(1,0,0,1);
+  98:StepperMotor.c ****         setStep(1,0,0,0);
+  99:StepperMotor.c ****     }
+ 100:StepperMotor.c ****     else
+ 101:StepperMotor.c ****     {
+ 102:StepperMotor.c ****         setStep(1,0,0,0);
+ 103:StepperMotor.c ****         setStep(1,0,0,1);
+ 104:StepperMotor.c ****         setStep(0,0,0,1);
+ 105:StepperMotor.c ****         setStep(0,0,1,1);
+ 106:StepperMotor.c ****         setStep(0,0,1,0);
+ 107:StepperMotor.c ****         setStep(0,1,1,0);
+ 108:StepperMotor.c ****         setStep(0,1,0,0);
+ 109:StepperMotor.c ****         setStep(1,1,0,0);
+ 110:StepperMotor.c ****     }
+ 111:StepperMotor.c **** }
+ 112:StepperMotor.c **** 
+ 113:StepperMotor.c **** 
+ 114:StepperMotor.c **** void step(uint32_t steps)
+ 115:StepperMotor.c **** {
+ 116:StepperMotor.c ****     for (uint32_t i = 0; i < steps; i++)
+ 117:StepperMotor.c ****     {
+ 118:StepperMotor.c ****         waveDrive();
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 6
+
+
+ 119:StepperMotor.c ****     }
+ 120:StepperMotor.c **** }
+ 121:StepperMotor.c **** 
+ 122:StepperMotor.c **** void oneRotaion()
+ 123:StepperMotor.c **** {
+ 124:StepperMotor.c ****     if(currentStep++ != 512)
+ 125:StepperMotor.c ****     {
+ 126:StepperMotor.c ****         waveDrive();
+ 127:StepperMotor.c ****     }
+ 128:StepperMotor.c ****     else
+ 129:StepperMotor.c ****     {
+ 130:StepperMotor.c ****         currentStep = 0;
+ 131:StepperMotor.c ****         currentDrive = None; 
+ 132:StepperMotor.c ****     }
+ 133:StepperMotor.c **** }
+ 134:StepperMotor.c ****             
+ 135:StepperMotor.c **** void setStep(uint8_t a1, uint8_t a2,uint8_t b1,uint8_t b2)
+ 136:StepperMotor.c **** {
+ 168              		.loc 1 136 0
+ 169              		.cfi_startproc
+ 170              		@ args = 0, pretend = 0, frame = 0
+ 171              		@ frame_needed = 0, uses_anonymous_args = 0
+ 172              	.LVL4:
+ 173 0000 70B5     		push	{r4, r5, r6, lr}
+ 174              		.cfi_def_cfa_offset 16
+ 175              		.cfi_offset 4, -16
+ 176              		.cfi_offset 5, -12
+ 177              		.cfi_offset 6, -8
+ 178              		.cfi_offset 14, -4
+ 179 0002 0E46     		mov	r6, r1
+ 180 0004 1546     		mov	r5, r2
+ 181 0006 1C46     		mov	r4, r3
+ 137:StepperMotor.c ****     a1_Write(a1);
+ 182              		.loc 1 137 0
+ 183 0008 FFF7FEFF 		bl	a1_Write
+ 184              	.LVL5:
+ 138:StepperMotor.c ****     a2_Write(a2);
+ 185              		.loc 1 138 0
+ 186 000c 3046     		mov	r0, r6
+ 187 000e FFF7FEFF 		bl	a2_Write
+ 188              	.LVL6:
+ 139:StepperMotor.c ****     b1_Write(b1);
+ 189              		.loc 1 139 0
+ 190 0012 2846     		mov	r0, r5
+ 191 0014 FFF7FEFF 		bl	b1_Write
+ 192              	.LVL7:
+ 140:StepperMotor.c ****     b2_Write(b2);
+ 193              		.loc 1 140 0
+ 194 0018 2046     		mov	r0, r4
+ 195 001a FFF7FEFF 		bl	b2_Write
+ 196              	.LVL8:
+ 141:StepperMotor.c ****     CyDelay(speed);
+ 197              		.loc 1 141 0
+ 198 001e 024B     		ldr	r3, .L18
+ 199 0020 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 200 0022 FFF7FEFF 		bl	CyDelay
+ 201              	.LVL9:
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 7
+
+
+ 202 0026 70BD     		pop	{r4, r5, r6, pc}
+ 203              	.L19:
+ 204              		.align	2
+ 205              	.L18:
+ 206 0028 00000000 		.word	.LANCHOR0
+ 207              		.cfi_endproc
+ 208              	.LFE73:
+ 209              		.size	setStep, .-setStep
+ 210              		.section	.text.fullDrive,"ax",%progbits
+ 211              		.align	2
+ 212              		.global	fullDrive
+ 213              		.thumb
+ 214              		.thumb_func
+ 215              		.type	fullDrive, %function
+ 216              	fullDrive:
+ 217              	.LFB68:
+  52:StepperMotor.c ****     if (direction)
+ 218              		.loc 1 52 0
+ 219              		.cfi_startproc
+ 220              		@ args = 0, pretend = 0, frame = 0
+ 221              		@ frame_needed = 0, uses_anonymous_args = 0
+ 222 0000 08B5     		push	{r3, lr}
+ 223              		.cfi_def_cfa_offset 8
+ 224              		.cfi_offset 3, -8
+ 225              		.cfi_offset 14, -4
+  53:StepperMotor.c ****     {
+ 226              		.loc 1 53 0
+ 227 0002 1B4B     		ldr	r3, .L24
+ 228 0004 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 229 0006 13F0FF0F 		tst	r3, #255
+ 230 000a 18D0     		beq	.L21
+  55:StepperMotor.c ****         setStep(0,1,1,0);
+ 231              		.loc 1 55 0
+ 232 000c 0023     		movs	r3, #0
+ 233 000e 1A46     		mov	r2, r3
+ 234 0010 0121     		movs	r1, #1
+ 235 0012 0846     		mov	r0, r1
+ 236 0014 FFF7FEFF 		bl	setStep
+ 237              	.LVL10:
+  56:StepperMotor.c ****         setStep(0,0,1,1);
+ 238              		.loc 1 56 0
+ 239 0018 0023     		movs	r3, #0
+ 240 001a 0122     		movs	r2, #1
+ 241 001c 1146     		mov	r1, r2
+ 242 001e 1846     		mov	r0, r3
+ 243 0020 FFF7FEFF 		bl	setStep
+ 244              	.LVL11:
+  57:StepperMotor.c ****         setStep(1,0,0,1);
+ 245              		.loc 1 57 0
+ 246 0024 0123     		movs	r3, #1
+ 247 0026 1A46     		mov	r2, r3
+ 248 0028 0021     		movs	r1, #0
+ 249 002a 0846     		mov	r0, r1
+ 250 002c FFF7FEFF 		bl	setStep
+ 251              	.LVL12:
+  58:StepperMotor.c ****     }
+ 252              		.loc 1 58 0
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 8
+
+
+ 253 0030 0123     		movs	r3, #1
+ 254 0032 0022     		movs	r2, #0
+ 255 0034 1146     		mov	r1, r2
+ 256 0036 1846     		mov	r0, r3
+ 257 0038 FFF7FEFF 		bl	setStep
+ 258              	.LVL13:
+ 259 003c 08BD     		pop	{r3, pc}
+ 260              	.L21:
+  62:StepperMotor.c ****         setStep(0,0,1,1);
+ 261              		.loc 1 62 0
+ 262 003e 0123     		movs	r3, #1
+ 263 0040 0022     		movs	r2, #0
+ 264 0042 1146     		mov	r1, r2
+ 265 0044 1846     		mov	r0, r3
+ 266 0046 FFF7FEFF 		bl	setStep
+ 267              	.LVL14:
+  63:StepperMotor.c ****         setStep(0,1,1,0);
+ 268              		.loc 1 63 0
+ 269 004a 0123     		movs	r3, #1
+ 270 004c 1A46     		mov	r2, r3
+ 271 004e 0021     		movs	r1, #0
+ 272 0050 0846     		mov	r0, r1
+ 273 0052 FFF7FEFF 		bl	setStep
+ 274              	.LVL15:
+  64:StepperMotor.c ****         setStep(1,1,0,0);
+ 275              		.loc 1 64 0
+ 276 0056 0023     		movs	r3, #0
+ 277 0058 0122     		movs	r2, #1
+ 278 005a 1146     		mov	r1, r2
+ 279 005c 1846     		mov	r0, r3
+ 280 005e FFF7FEFF 		bl	setStep
+ 281              	.LVL16:
+  65:StepperMotor.c ****     }
+ 282              		.loc 1 65 0
+ 283 0062 0023     		movs	r3, #0
+ 284 0064 1A46     		mov	r2, r3
+ 285 0066 0121     		movs	r1, #1
+ 286 0068 0846     		mov	r0, r1
+ 287 006a FFF7FEFF 		bl	setStep
+ 288              	.LVL17:
+ 289 006e 08BD     		pop	{r3, pc}
+ 290              	.L25:
+ 291              		.align	2
+ 292              	.L24:
+ 293 0070 00000000 		.word	.LANCHOR0
+ 294              		.cfi_endproc
+ 295              	.LFE68:
+ 296              		.size	fullDrive, .-fullDrive
+ 297              		.section	.text.waveDrive,"ax",%progbits
+ 298              		.align	2
+ 299              		.global	waveDrive
+ 300              		.thumb
+ 301              		.thumb_func
+ 302              		.type	waveDrive, %function
+ 303              	waveDrive:
+ 304              	.LFB69:
+  70:StepperMotor.c ****     if (direction)
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 9
+
+
+ 305              		.loc 1 70 0
+ 306              		.cfi_startproc
+ 307              		@ args = 0, pretend = 0, frame = 0
+ 308              		@ frame_needed = 0, uses_anonymous_args = 0
+ 309 0000 08B5     		push	{r3, lr}
+ 310              		.cfi_def_cfa_offset 8
+ 311              		.cfi_offset 3, -8
+ 312              		.cfi_offset 14, -4
+  71:StepperMotor.c ****     {
+ 313              		.loc 1 71 0
+ 314 0002 1B4B     		ldr	r3, .L30
+ 315 0004 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 316 0006 13F0FF0F 		tst	r3, #255
+ 317 000a 18D0     		beq	.L27
+  73:StepperMotor.c ****         setStep(0,1,0,0);
+ 318              		.loc 1 73 0
+ 319 000c 0023     		movs	r3, #0
+ 320 000e 1A46     		mov	r2, r3
+ 321 0010 1946     		mov	r1, r3
+ 322 0012 0120     		movs	r0, #1
+ 323 0014 FFF7FEFF 		bl	setStep
+ 324              	.LVL18:
+  74:StepperMotor.c ****         setStep(0,0,1,0);
+ 325              		.loc 1 74 0
+ 326 0018 0023     		movs	r3, #0
+ 327 001a 1A46     		mov	r2, r3
+ 328 001c 0121     		movs	r1, #1
+ 329 001e 1846     		mov	r0, r3
+ 330 0020 FFF7FEFF 		bl	setStep
+ 331              	.LVL19:
+  75:StepperMotor.c ****         setStep(0,0,0,1);
+ 332              		.loc 1 75 0
+ 333 0024 0023     		movs	r3, #0
+ 334 0026 0122     		movs	r2, #1
+ 335 0028 1946     		mov	r1, r3
+ 336 002a 1846     		mov	r0, r3
+ 337 002c FFF7FEFF 		bl	setStep
+ 338              	.LVL20:
+  76:StepperMotor.c ****     }
+ 339              		.loc 1 76 0
+ 340 0030 0123     		movs	r3, #1
+ 341 0032 0022     		movs	r2, #0
+ 342 0034 1146     		mov	r1, r2
+ 343 0036 1046     		mov	r0, r2
+ 344 0038 FFF7FEFF 		bl	setStep
+ 345              	.LVL21:
+ 346 003c 08BD     		pop	{r3, pc}
+ 347              	.L27:
+  80:StepperMotor.c ****         setStep(0,0,1,0);
+ 348              		.loc 1 80 0
+ 349 003e 0123     		movs	r3, #1
+ 350 0040 0022     		movs	r2, #0
+ 351 0042 1146     		mov	r1, r2
+ 352 0044 1046     		mov	r0, r2
+ 353 0046 FFF7FEFF 		bl	setStep
+ 354              	.LVL22:
+  81:StepperMotor.c ****         setStep(0,1,0,0);
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 10
+
+
+ 355              		.loc 1 81 0
+ 356 004a 0023     		movs	r3, #0
+ 357 004c 0122     		movs	r2, #1
+ 358 004e 1946     		mov	r1, r3
+ 359 0050 1846     		mov	r0, r3
+ 360 0052 FFF7FEFF 		bl	setStep
+ 361              	.LVL23:
+  82:StepperMotor.c ****         setStep(1,0,0,0);
+ 362              		.loc 1 82 0
+ 363 0056 0023     		movs	r3, #0
+ 364 0058 1A46     		mov	r2, r3
+ 365 005a 0121     		movs	r1, #1
+ 366 005c 1846     		mov	r0, r3
+ 367 005e FFF7FEFF 		bl	setStep
+ 368              	.LVL24:
+  83:StepperMotor.c ****     }
+ 369              		.loc 1 83 0
+ 370 0062 0023     		movs	r3, #0
+ 371 0064 1A46     		mov	r2, r3
+ 372 0066 1946     		mov	r1, r3
+ 373 0068 0120     		movs	r0, #1
+ 374 006a FFF7FEFF 		bl	setStep
+ 375              	.LVL25:
+ 376 006e 08BD     		pop	{r3, pc}
+ 377              	.L31:
+ 378              		.align	2
+ 379              	.L30:
+ 380 0070 00000000 		.word	.LANCHOR0
+ 381              		.cfi_endproc
+ 382              	.LFE69:
+ 383              		.size	waveDrive, .-waveDrive
+ 384              		.section	.text.step,"ax",%progbits
+ 385              		.align	2
+ 386              		.global	step
+ 387              		.thumb
+ 388              		.thumb_func
+ 389              		.type	step, %function
+ 390              	step:
+ 391              	.LFB71:
+ 115:StepperMotor.c ****     for (uint32_t i = 0; i < steps; i++)
+ 392              		.loc 1 115 0
+ 393              		.cfi_startproc
+ 394              		@ args = 0, pretend = 0, frame = 0
+ 395              		@ frame_needed = 0, uses_anonymous_args = 0
+ 396              	.LVL26:
+ 397 0000 38B5     		push	{r3, r4, r5, lr}
+ 398              		.cfi_def_cfa_offset 16
+ 399              		.cfi_offset 3, -16
+ 400              		.cfi_offset 4, -12
+ 401              		.cfi_offset 5, -8
+ 402              		.cfi_offset 14, -4
+ 403 0002 0546     		mov	r5, r0
+ 404              	.LVL27:
+ 405              	.LBB2:
+ 116:StepperMotor.c ****     {
+ 406              		.loc 1 116 0
+ 407 0004 0024     		movs	r4, #0
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 11
+
+
+ 408 0006 02E0     		b	.L33
+ 409              	.LVL28:
+ 410              	.L34:
+ 118:StepperMotor.c ****     }
+ 411              		.loc 1 118 0 discriminator 3
+ 412 0008 FFF7FEFF 		bl	waveDrive
+ 413              	.LVL29:
+ 116:StepperMotor.c ****     {
+ 414              		.loc 1 116 0 discriminator 3
+ 415 000c 0134     		adds	r4, r4, #1
+ 416              	.LVL30:
+ 417              	.L33:
+ 116:StepperMotor.c ****     {
+ 418              		.loc 1 116 0 is_stmt 0 discriminator 1
+ 419 000e AC42     		cmp	r4, r5
+ 420 0010 FAD3     		bcc	.L34
+ 421              	.LBE2:
+ 120:StepperMotor.c **** 
+ 422              		.loc 1 120 0 is_stmt 1
+ 423 0012 38BD     		pop	{r3, r4, r5, pc}
+ 424              		.cfi_endproc
+ 425              	.LFE71:
+ 426              		.size	step, .-step
+ 427              		.section	.text.oneRotaion,"ax",%progbits
+ 428              		.align	2
+ 429              		.global	oneRotaion
+ 430              		.thumb
+ 431              		.thumb_func
+ 432              		.type	oneRotaion, %function
+ 433              	oneRotaion:
+ 434              	.LFB72:
+ 123:StepperMotor.c ****     if(currentStep++ != 512)
+ 435              		.loc 1 123 0
+ 436              		.cfi_startproc
+ 437              		@ args = 0, pretend = 0, frame = 0
+ 438              		@ frame_needed = 0, uses_anonymous_args = 0
+ 439 0000 08B5     		push	{r3, lr}
+ 440              		.cfi_def_cfa_offset 8
+ 441              		.cfi_offset 3, -8
+ 442              		.cfi_offset 14, -4
+ 124:StepperMotor.c ****     {
+ 443              		.loc 1 124 0
+ 444 0002 074A     		ldr	r2, .L40
+ 445 0004 1368     		ldr	r3, [r2]
+ 446 0006 591C     		adds	r1, r3, #1
+ 447 0008 1160     		str	r1, [r2]
+ 448 000a B3F5007F 		cmp	r3, #512
+ 449 000e 02D0     		beq	.L37
+ 126:StepperMotor.c ****     }
+ 450              		.loc 1 126 0
+ 451 0010 FFF7FEFF 		bl	waveDrive
+ 452              	.LVL31:
+ 453 0014 08BD     		pop	{r3, pc}
+ 454              	.L37:
+ 130:StepperMotor.c ****         currentDrive = None; 
+ 455              		.loc 1 130 0
+ 456 0016 024B     		ldr	r3, .L40
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 12
+
+
+ 457 0018 0022     		movs	r2, #0
+ 458 001a 1A60     		str	r2, [r3]
+ 131:StepperMotor.c ****     }
+ 459              		.loc 1 131 0
+ 460 001c 1A71     		strb	r2, [r3, #4]
+ 461 001e 08BD     		pop	{r3, pc}
+ 462              	.L41:
+ 463              		.align	2
+ 464              	.L40:
+ 465 0020 00000000 		.word	.LANCHOR1
+ 466              		.cfi_endproc
+ 467              	.LFE72:
+ 468              		.size	oneRotaion, .-oneRotaion
+ 469              		.section	.text.halfDrive,"ax",%progbits
+ 470              		.align	2
+ 471              		.global	halfDrive
+ 472              		.thumb
+ 473              		.thumb_func
+ 474              		.type	halfDrive, %function
+ 475              	halfDrive:
+ 476              	.LFB70:
+  88:StepperMotor.c ****     if (direction)
+ 477              		.loc 1 88 0
+ 478              		.cfi_startproc
+ 479              		@ args = 0, pretend = 0, frame = 0
+ 480              		@ frame_needed = 0, uses_anonymous_args = 0
+ 481 0000 08B5     		push	{r3, lr}
+ 482              		.cfi_def_cfa_offset 8
+ 483              		.cfi_offset 3, -8
+ 484              		.cfi_offset 14, -4
+  89:StepperMotor.c ****     {
+ 485              		.loc 1 89 0
+ 486 0002 334B     		ldr	r3, .L46
+ 487 0004 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 488 0006 13F0FF0F 		tst	r3, #255
+ 489 000a 30D0     		beq	.L43
+  91:StepperMotor.c ****         setStep(0,1,0,0);
+ 490              		.loc 1 91 0
+ 491 000c 0023     		movs	r3, #0
+ 492 000e 1A46     		mov	r2, r3
+ 493 0010 0121     		movs	r1, #1
+ 494 0012 0846     		mov	r0, r1
+ 495 0014 FFF7FEFF 		bl	setStep
+ 496              	.LVL32:
+  92:StepperMotor.c ****         setStep(0,1,1,0);
+ 497              		.loc 1 92 0
+ 498 0018 0023     		movs	r3, #0
+ 499 001a 1A46     		mov	r2, r3
+ 500 001c 0121     		movs	r1, #1
+ 501 001e 1846     		mov	r0, r3
+ 502 0020 FFF7FEFF 		bl	setStep
+ 503              	.LVL33:
+  93:StepperMotor.c ****         setStep(0,0,1,0);
+ 504              		.loc 1 93 0
+ 505 0024 0023     		movs	r3, #0
+ 506 0026 0122     		movs	r2, #1
+ 507 0028 1146     		mov	r1, r2
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 13
+
+
+ 508 002a 1846     		mov	r0, r3
+ 509 002c FFF7FEFF 		bl	setStep
+ 510              	.LVL34:
+  94:StepperMotor.c ****         setStep(0,0,1,1);
+ 511              		.loc 1 94 0
+ 512 0030 0023     		movs	r3, #0
+ 513 0032 0122     		movs	r2, #1
+ 514 0034 1946     		mov	r1, r3
+ 515 0036 1846     		mov	r0, r3
+ 516 0038 FFF7FEFF 		bl	setStep
+ 517              	.LVL35:
+  95:StepperMotor.c ****         setStep(0,0,0,1);
+ 518              		.loc 1 95 0
+ 519 003c 0123     		movs	r3, #1
+ 520 003e 1A46     		mov	r2, r3
+ 521 0040 0021     		movs	r1, #0
+ 522 0042 0846     		mov	r0, r1
+ 523 0044 FFF7FEFF 		bl	setStep
+ 524              	.LVL36:
+  96:StepperMotor.c ****         setStep(1,0,0,1);
+ 525              		.loc 1 96 0
+ 526 0048 0123     		movs	r3, #1
+ 527 004a 0022     		movs	r2, #0
+ 528 004c 1146     		mov	r1, r2
+ 529 004e 1046     		mov	r0, r2
+ 530 0050 FFF7FEFF 		bl	setStep
+ 531              	.LVL37:
+  97:StepperMotor.c ****         setStep(1,0,0,0);
+ 532              		.loc 1 97 0
+ 533 0054 0123     		movs	r3, #1
+ 534 0056 0022     		movs	r2, #0
+ 535 0058 1146     		mov	r1, r2
+ 536 005a 1846     		mov	r0, r3
+ 537 005c FFF7FEFF 		bl	setStep
+ 538              	.LVL38:
+  98:StepperMotor.c ****     }
+ 539              		.loc 1 98 0
+ 540 0060 0023     		movs	r3, #0
+ 541 0062 1A46     		mov	r2, r3
+ 542 0064 1946     		mov	r1, r3
+ 543 0066 0120     		movs	r0, #1
+ 544 0068 FFF7FEFF 		bl	setStep
+ 545              	.LVL39:
+ 546 006c 08BD     		pop	{r3, pc}
+ 547              	.L43:
+ 102:StepperMotor.c ****         setStep(1,0,0,1);
+ 548              		.loc 1 102 0
+ 549 006e 0023     		movs	r3, #0
+ 550 0070 1A46     		mov	r2, r3
+ 551 0072 1946     		mov	r1, r3
+ 552 0074 0120     		movs	r0, #1
+ 553 0076 FFF7FEFF 		bl	setStep
+ 554              	.LVL40:
+ 103:StepperMotor.c ****         setStep(0,0,0,1);
+ 555              		.loc 1 103 0
+ 556 007a 0123     		movs	r3, #1
+ 557 007c 0022     		movs	r2, #0
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 14
+
+
+ 558 007e 1146     		mov	r1, r2
+ 559 0080 1846     		mov	r0, r3
+ 560 0082 FFF7FEFF 		bl	setStep
+ 561              	.LVL41:
+ 104:StepperMotor.c ****         setStep(0,0,1,1);
+ 562              		.loc 1 104 0
+ 563 0086 0123     		movs	r3, #1
+ 564 0088 0022     		movs	r2, #0
+ 565 008a 1146     		mov	r1, r2
+ 566 008c 1046     		mov	r0, r2
+ 567 008e FFF7FEFF 		bl	setStep
+ 568              	.LVL42:
+ 105:StepperMotor.c ****         setStep(0,0,1,0);
+ 569              		.loc 1 105 0
+ 570 0092 0123     		movs	r3, #1
+ 571 0094 1A46     		mov	r2, r3
+ 572 0096 0021     		movs	r1, #0
+ 573 0098 0846     		mov	r0, r1
+ 574 009a FFF7FEFF 		bl	setStep
+ 575              	.LVL43:
+ 106:StepperMotor.c ****         setStep(0,1,1,0);
+ 576              		.loc 1 106 0
+ 577 009e 0023     		movs	r3, #0
+ 578 00a0 0122     		movs	r2, #1
+ 579 00a2 1946     		mov	r1, r3
+ 580 00a4 1846     		mov	r0, r3
+ 581 00a6 FFF7FEFF 		bl	setStep
+ 582              	.LVL44:
+ 107:StepperMotor.c ****         setStep(0,1,0,0);
+ 583              		.loc 1 107 0
+ 584 00aa 0023     		movs	r3, #0
+ 585 00ac 0122     		movs	r2, #1
+ 586 00ae 1146     		mov	r1, r2
+ 587 00b0 1846     		mov	r0, r3
+ 588 00b2 FFF7FEFF 		bl	setStep
+ 589              	.LVL45:
+ 108:StepperMotor.c ****         setStep(1,1,0,0);
+ 590              		.loc 1 108 0
+ 591 00b6 0023     		movs	r3, #0
+ 592 00b8 1A46     		mov	r2, r3
+ 593 00ba 0121     		movs	r1, #1
+ 594 00bc 1846     		mov	r0, r3
+ 595 00be FFF7FEFF 		bl	setStep
+ 596              	.LVL46:
+ 109:StepperMotor.c ****     }
+ 597              		.loc 1 109 0
+ 598 00c2 0023     		movs	r3, #0
+ 599 00c4 1A46     		mov	r2, r3
+ 600 00c6 0121     		movs	r1, #1
+ 601 00c8 0846     		mov	r0, r1
+ 602 00ca FFF7FEFF 		bl	setStep
+ 603              	.LVL47:
+ 604 00ce 08BD     		pop	{r3, pc}
+ 605              	.L47:
+ 606              		.align	2
+ 607              	.L46:
+ 608 00d0 00000000 		.word	.LANCHOR0
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 15
+
+
+ 609              		.cfi_endproc
+ 610              	.LFE70:
+ 611              		.size	halfDrive, .-halfDrive
+ 612              		.global	currentStep
+ 613              		.global	currentDrive
+ 614              		.global	direction
+ 615              		.global	speed
+ 616              		.data
+ 617              		.set	.LANCHOR0,. + 0
+ 618              		.type	speed, %object
+ 619              		.size	speed, 1
+ 620              	speed:
+ 621 0000 0A       		.byte	10
+ 622              		.type	direction, %object
+ 623              		.size	direction, 1
+ 624              	direction:
+ 625 0001 01       		.byte	1
+ 626              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 627              		.align	2
+ 628              	.LC0:
+ 629 0000 53706565 		.ascii	"Speed is %d \015\012\000"
+ 629      64206973 
+ 629      20256420 
+ 629      0D0A00
+ 630 000f 00       		.space	1
+ 631              	.LC1:
+ 632 0010 53746F70 		.ascii	"Stop\015\012\000"
+ 632      0D0A00
+ 633              		.bss
+ 634              		.align	2
+ 635              		.set	.LANCHOR1,. + 0
+ 636              		.type	currentStep, %object
+ 637              		.size	currentStep, 4
+ 638              	currentStep:
+ 639 0000 00000000 		.space	4
+ 640              		.type	currentDrive, %object
+ 641              		.size	currentDrive, 1
+ 642              	currentDrive:
+ 643 0004 00       		.space	1
+ 644              		.text
+ 645              	.Letext0:
+ 646              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 647              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 648              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 649              		.file 5 "Generated_Source\\PSoC5/Timer_1.h"
+ 650              		.file 6 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 651              		.file 7 "Generated_Source\\PSoC5/UART_1.h"
+ 652              		.file 8 "Generated_Source\\PSoC5/a1.h"
+ 653              		.file 9 "Generated_Source\\PSoC5/a2.h"
+ 654              		.file 10 "Generated_Source\\PSoC5/b1.h"
+ 655              		.file 11 "Generated_Source\\PSoC5/b2.h"
+ 656              		.file 12 "Generated_Source\\PSoC5/CyLib.h"
+ 657              		.file 13 "StepperMotor.h"
+ 658              		.section	.debug_info,"",%progbits
+ 659              	.Ldebug_info0:
+ 660 0000 FC070000 		.4byte	0x7fc
+ 661 0004 0400     		.2byte	0x4
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 16
+
+
+ 662 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 663 000a 04       		.byte	0x4
+ 664 000b 01       		.uleb128 0x1
+ 665 000c 98000000 		.4byte	.LASF50
+ 666 0010 0C       		.byte	0xc
+ 667 0011 54020000 		.4byte	.LASF51
+ 668 0015 9C010000 		.4byte	.LASF52
+ 669 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 670 001d 00000000 		.4byte	0
+ 671 0021 00000000 		.4byte	.Ldebug_line0
+ 672 0025 02       		.uleb128 0x2
+ 673 0026 01       		.byte	0x1
+ 674 0027 06       		.byte	0x6
+ 675 0028 AF020000 		.4byte	.LASF0
+ 676 002c 03       		.uleb128 0x3
+ 677 002d 09000000 		.4byte	.LASF4
+ 678 0031 02       		.byte	0x2
+ 679 0032 1D       		.byte	0x1d
+ 680 0033 37000000 		.4byte	0x37
+ 681 0037 02       		.uleb128 0x2
+ 682 0038 01       		.byte	0x1
+ 683 0039 08       		.byte	0x8
+ 684 003a 8A000000 		.4byte	.LASF1
+ 685 003e 02       		.uleb128 0x2
+ 686 003f 02       		.byte	0x2
+ 687 0040 05       		.byte	0x5
+ 688 0041 8A010000 		.4byte	.LASF2
+ 689 0045 02       		.uleb128 0x2
+ 690 0046 02       		.byte	0x2
+ 691 0047 07       		.byte	0x7
+ 692 0048 56010000 		.4byte	.LASF3
+ 693 004c 03       		.uleb128 0x3
+ 694 004d 37000000 		.4byte	.LASF5
+ 695 0051 02       		.byte	0x2
+ 696 0052 3F       		.byte	0x3f
+ 697 0053 57000000 		.4byte	0x57
+ 698 0057 02       		.uleb128 0x2
+ 699 0058 04       		.byte	0x4
+ 700 0059 05       		.byte	0x5
+ 701 005a 9A020000 		.4byte	.LASF6
+ 702 005e 03       		.uleb128 0x3
+ 703 005f 26010000 		.4byte	.LASF7
+ 704 0063 02       		.byte	0x2
+ 705 0064 41       		.byte	0x41
+ 706 0065 69000000 		.4byte	0x69
+ 707 0069 02       		.uleb128 0x2
+ 708 006a 04       		.byte	0x4
+ 709 006b 07       		.byte	0x7
+ 710 006c 3B010000 		.4byte	.LASF8
+ 711 0070 02       		.uleb128 0x2
+ 712 0071 08       		.byte	0x8
+ 713 0072 05       		.byte	0x5
+ 714 0073 2D020000 		.4byte	.LASF9
+ 715 0077 02       		.uleb128 0x2
+ 716 0078 08       		.byte	0x8
+ 717 0079 07       		.byte	0x7
+ 718 007a E3010000 		.4byte	.LASF10
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 17
+
+
+ 719 007e 04       		.uleb128 0x4
+ 720 007f 04       		.byte	0x4
+ 721 0080 05       		.byte	0x5
+ 722 0081 696E7400 		.ascii	"int\000"
+ 723 0085 02       		.uleb128 0x2
+ 724 0086 04       		.byte	0x4
+ 725 0087 07       		.byte	0x7
+ 726 0088 D6010000 		.4byte	.LASF11
+ 727 008c 03       		.uleb128 0x3
+ 728 008d FA010000 		.4byte	.LASF12
+ 729 0091 03       		.byte	0x3
+ 730 0092 18       		.byte	0x18
+ 731 0093 2C000000 		.4byte	0x2c
+ 732 0097 03       		.uleb128 0x3
+ 733 0098 6B000000 		.4byte	.LASF13
+ 734 009c 03       		.byte	0x3
+ 735 009d 2C       		.byte	0x2c
+ 736 009e 4C000000 		.4byte	0x4c
+ 737 00a2 03       		.uleb128 0x3
+ 738 00a3 91020000 		.4byte	.LASF14
+ 739 00a7 03       		.byte	0x3
+ 740 00a8 30       		.byte	0x30
+ 741 00a9 5E000000 		.4byte	0x5e
+ 742 00ad 02       		.uleb128 0x2
+ 743 00ae 08       		.byte	0x8
+ 744 00af 04       		.byte	0x4
+ 745 00b0 A3020000 		.4byte	.LASF15
+ 746 00b4 02       		.uleb128 0x2
+ 747 00b5 04       		.byte	0x4
+ 748 00b6 07       		.byte	0x7
+ 749 00b7 24020000 		.4byte	.LASF16
+ 750 00bb 02       		.uleb128 0x2
+ 751 00bc 01       		.byte	0x1
+ 752 00bd 08       		.byte	0x8
+ 753 00be 4F020000 		.4byte	.LASF17
+ 754 00c2 05       		.uleb128 0x5
+ 755 00c3 41000000 		.4byte	.LASF53
+ 756 00c7 01       		.byte	0x1
+ 757 00c8 37000000 		.4byte	0x37
+ 758 00cc 0D       		.byte	0xd
+ 759 00cd 15       		.byte	0x15
+ 760 00ce F1000000 		.4byte	0xf1
+ 761 00d2 06       		.uleb128 0x6
+ 762 00d3 BB020000 		.4byte	.LASF18
+ 763 00d7 00       		.byte	0
+ 764 00d8 06       		.uleb128 0x6
+ 765 00d9 57000000 		.4byte	.LASF19
+ 766 00dd 01       		.byte	0x1
+ 767 00de 06       		.uleb128 0x6
+ 768 00df 3B020000 		.4byte	.LASF20
+ 769 00e3 02       		.byte	0x2
+ 770 00e4 06       		.uleb128 0x6
+ 771 00e5 31010000 		.4byte	.LASF21
+ 772 00e9 03       		.byte	0x3
+ 773 00ea 06       		.uleb128 0x6
+ 774 00eb 7E020000 		.4byte	.LASF22
+ 775 00ef 04       		.byte	0x4
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 18
+
+
+ 776 00f0 00       		.byte	0
+ 777 00f1 02       		.uleb128 0x2
+ 778 00f2 04       		.byte	0x4
+ 779 00f3 04       		.byte	0x4
+ 780 00f4 73000000 		.4byte	.LASF23
+ 781 00f8 02       		.uleb128 0x2
+ 782 00f9 08       		.byte	0x8
+ 783 00fa 04       		.byte	0x4
+ 784 00fb 50000000 		.4byte	.LASF24
+ 785 00ff 07       		.uleb128 0x7
+ 786 0100 A2000000 		.4byte	0xa2
+ 787 0104 07       		.uleb128 0x7
+ 788 0105 8C000000 		.4byte	0x8c
+ 789 0109 08       		.uleb128 0x8
+ 790 010a 79000000 		.4byte	.LASF25
+ 791 010e 01       		.byte	0x1
+ 792 010f 16       		.byte	0x16
+ 793 0110 00000000 		.4byte	.LFB64
+ 794 0114 08000000 		.4byte	.LFE64-.LFB64
+ 795 0118 01       		.uleb128 0x1
+ 796 0119 9C       		.byte	0x9c
+ 797 011a 28010000 		.4byte	0x128
+ 798 011e 09       		.uleb128 0x9
+ 799 011f 06000000 		.4byte	.LVL0
+ 800 0123 A7070000 		.4byte	0x7a7
+ 801 0127 00       		.byte	0
+ 802 0128 0A       		.uleb128 0xa
+ 803 0129 10020000 		.4byte	.LASF54
+ 804 012d 01       		.byte	0x1
+ 805 012e 1C       		.byte	0x1c
+ 806 012f 00000000 		.4byte	.LFB65
+ 807 0133 1C000000 		.4byte	.LFE65-.LFB65
+ 808 0137 01       		.uleb128 0x1
+ 809 0138 9C       		.byte	0x9c
+ 810 0139 08       		.uleb128 0x8
+ 811 013a 63020000 		.4byte	.LASF26
+ 812 013e 01       		.byte	0x1
+ 813 013f 22       		.byte	0x22
+ 814 0140 00000000 		.4byte	.LFB66
+ 815 0144 3C000000 		.4byte	.LFE66-.LFB66
+ 816 0148 01       		.uleb128 0x1
+ 817 0149 9C       		.byte	0x9c
+ 818 014a 92010000 		.4byte	0x192
+ 819 014e 0B       		.uleb128 0xb
+ 820 014f 8A020000 		.4byte	.LASF33
+ 821 0153 01       		.byte	0x1
+ 822 0154 26       		.byte	0x26
+ 823 0155 92010000 		.4byte	0x192
+ 824 0159 03       		.uleb128 0x3
+ 825 015a 91       		.byte	0x91
+ 826 015b F87D     		.sleb128 -264
+ 827 015d 0C       		.uleb128 0xc
+ 828 015e 28000000 		.4byte	.LVL1
+ 829 0162 B2070000 		.4byte	0x7b2
+ 830 0166 81010000 		.4byte	0x181
+ 831 016a 0D       		.uleb128 0xd
+ 832 016b 01       		.uleb128 0x1
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 19
+
+
+ 833 016c 50       		.byte	0x50
+ 834 016d 02       		.uleb128 0x2
+ 835 016e 7D       		.byte	0x7d
+ 836 016f 00       		.sleb128 0
+ 837 0170 0D       		.uleb128 0xd
+ 838 0171 01       		.uleb128 0x1
+ 839 0172 51       		.byte	0x51
+ 840 0173 03       		.uleb128 0x3
+ 841 0174 0A       		.byte	0xa
+ 842 0175 0001     		.2byte	0x100
+ 843 0177 0D       		.uleb128 0xd
+ 844 0178 01       		.uleb128 0x1
+ 845 0179 52       		.byte	0x52
+ 846 017a 05       		.uleb128 0x5
+ 847 017b 03       		.byte	0x3
+ 848 017c 00000000 		.4byte	.LC0
+ 849 0180 00       		.byte	0
+ 850 0181 0E       		.uleb128 0xe
+ 851 0182 2E000000 		.4byte	.LVL2
+ 852 0186 BD070000 		.4byte	0x7bd
+ 853 018a 0D       		.uleb128 0xd
+ 854 018b 01       		.uleb128 0x1
+ 855 018c 50       		.byte	0x50
+ 856 018d 02       		.uleb128 0x2
+ 857 018e 7D       		.byte	0x7d
+ 858 018f 00       		.sleb128 0
+ 859 0190 00       		.byte	0
+ 860 0191 00       		.byte	0
+ 861 0192 0F       		.uleb128 0xf
+ 862 0193 BB000000 		.4byte	0xbb
+ 863 0197 A2010000 		.4byte	0x1a2
+ 864 019b 10       		.uleb128 0x10
+ 865 019c B4000000 		.4byte	0xb4
+ 866 01a0 FF       		.byte	0xff
+ 867 01a1 00       		.byte	0
+ 868 01a2 08       		.uleb128 0x8
+ 869 01a3 69010000 		.4byte	.LASF27
+ 870 01a7 01       		.byte	0x1
+ 871 01a8 2C       		.byte	0x2c
+ 872 01a9 00000000 		.4byte	.LFB67
+ 873 01ad 10000000 		.4byte	.LFE67-.LFB67
+ 874 01b1 01       		.uleb128 0x1
+ 875 01b2 9C       		.byte	0x9c
+ 876 01b3 CB010000 		.4byte	0x1cb
+ 877 01b7 0E       		.uleb128 0xe
+ 878 01b8 08000000 		.4byte	.LVL3
+ 879 01bc BD070000 		.4byte	0x7bd
+ 880 01c0 0D       		.uleb128 0xd
+ 881 01c1 01       		.uleb128 0x1
+ 882 01c2 50       		.byte	0x50
+ 883 01c3 05       		.uleb128 0x5
+ 884 01c4 03       		.byte	0x3
+ 885 01c5 10000000 		.4byte	.LC1
+ 886 01c9 00       		.byte	0
+ 887 01ca 00       		.byte	0
+ 888 01cb 08       		.uleb128 0x8
+ 889 01cc 94010000 		.4byte	.LASF28
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 20
+
+
+ 890 01d0 01       		.byte	0x1
+ 891 01d1 87       		.byte	0x87
+ 892 01d2 00000000 		.4byte	.LFB73
+ 893 01d6 2C000000 		.4byte	.LFE73-.LFB73
+ 894 01da 01       		.uleb128 0x1
+ 895 01db 9C       		.byte	0x9c
+ 896 01dc 67020000 		.4byte	0x267
+ 897 01e0 11       		.uleb128 0x11
+ 898 01e1 613100   		.ascii	"a1\000"
+ 899 01e4 01       		.byte	0x1
+ 900 01e5 87       		.byte	0x87
+ 901 01e6 8C000000 		.4byte	0x8c
+ 902 01ea 00000000 		.4byte	.LLST0
+ 903 01ee 11       		.uleb128 0x11
+ 904 01ef 613200   		.ascii	"a2\000"
+ 905 01f2 01       		.byte	0x1
+ 906 01f3 87       		.byte	0x87
+ 907 01f4 8C000000 		.4byte	0x8c
+ 908 01f8 21000000 		.4byte	.LLST1
+ 909 01fc 11       		.uleb128 0x11
+ 910 01fd 623100   		.ascii	"b1\000"
+ 911 0200 01       		.byte	0x1
+ 912 0201 87       		.byte	0x87
+ 913 0202 8C000000 		.4byte	0x8c
+ 914 0206 42000000 		.4byte	.LLST2
+ 915 020a 11       		.uleb128 0x11
+ 916 020b 623200   		.ascii	"b2\000"
+ 917 020e 01       		.byte	0x1
+ 918 020f 87       		.byte	0x87
+ 919 0210 8C000000 		.4byte	0x8c
+ 920 0214 63000000 		.4byte	.LLST3
+ 921 0218 09       		.uleb128 0x9
+ 922 0219 0C000000 		.4byte	.LVL5
+ 923 021d C8070000 		.4byte	0x7c8
+ 924 0221 0C       		.uleb128 0xc
+ 925 0222 12000000 		.4byte	.LVL6
+ 926 0226 D3070000 		.4byte	0x7d3
+ 927 022a 35020000 		.4byte	0x235
+ 928 022e 0D       		.uleb128 0xd
+ 929 022f 01       		.uleb128 0x1
+ 930 0230 50       		.byte	0x50
+ 931 0231 02       		.uleb128 0x2
+ 932 0232 76       		.byte	0x76
+ 933 0233 00       		.sleb128 0
+ 934 0234 00       		.byte	0
+ 935 0235 0C       		.uleb128 0xc
+ 936 0236 18000000 		.4byte	.LVL7
+ 937 023a DE070000 		.4byte	0x7de
+ 938 023e 49020000 		.4byte	0x249
+ 939 0242 0D       		.uleb128 0xd
+ 940 0243 01       		.uleb128 0x1
+ 941 0244 50       		.byte	0x50
+ 942 0245 02       		.uleb128 0x2
+ 943 0246 75       		.byte	0x75
+ 944 0247 00       		.sleb128 0
+ 945 0248 00       		.byte	0
+ 946 0249 0C       		.uleb128 0xc
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 21
+
+
+ 947 024a 1E000000 		.4byte	.LVL8
+ 948 024e E9070000 		.4byte	0x7e9
+ 949 0252 5D020000 		.4byte	0x25d
+ 950 0256 0D       		.uleb128 0xd
+ 951 0257 01       		.uleb128 0x1
+ 952 0258 50       		.byte	0x50
+ 953 0259 02       		.uleb128 0x2
+ 954 025a 74       		.byte	0x74
+ 955 025b 00       		.sleb128 0
+ 956 025c 00       		.byte	0
+ 957 025d 09       		.uleb128 0x9
+ 958 025e 26000000 		.4byte	.LVL9
+ 959 0262 F4070000 		.4byte	0x7f4
+ 960 0266 00       		.byte	0
+ 961 0267 08       		.uleb128 0x8
+ 962 0268 21000000 		.4byte	.LASF29
+ 963 026c 01       		.byte	0x1
+ 964 026d 33       		.byte	0x33
+ 965 026e 00000000 		.4byte	.LFB68
+ 966 0272 74000000 		.4byte	.LFE68-.LFB68
+ 967 0276 01       		.uleb128 0x1
+ 968 0277 9C       		.byte	0x9c
+ 969 0278 89030000 		.4byte	0x389
+ 970 027c 0C       		.uleb128 0xc
+ 971 027d 18000000 		.4byte	.LVL10
+ 972 0281 CB010000 		.4byte	0x1cb
+ 973 0285 9E020000 		.4byte	0x29e
+ 974 0289 0D       		.uleb128 0xd
+ 975 028a 01       		.uleb128 0x1
+ 976 028b 50       		.byte	0x50
+ 977 028c 01       		.uleb128 0x1
+ 978 028d 31       		.byte	0x31
+ 979 028e 0D       		.uleb128 0xd
+ 980 028f 01       		.uleb128 0x1
+ 981 0290 51       		.byte	0x51
+ 982 0291 01       		.uleb128 0x1
+ 983 0292 31       		.byte	0x31
+ 984 0293 0D       		.uleb128 0xd
+ 985 0294 01       		.uleb128 0x1
+ 986 0295 52       		.byte	0x52
+ 987 0296 01       		.uleb128 0x1
+ 988 0297 30       		.byte	0x30
+ 989 0298 0D       		.uleb128 0xd
+ 990 0299 01       		.uleb128 0x1
+ 991 029a 53       		.byte	0x53
+ 992 029b 01       		.uleb128 0x1
+ 993 029c 30       		.byte	0x30
+ 994 029d 00       		.byte	0
+ 995 029e 0C       		.uleb128 0xc
+ 996 029f 24000000 		.4byte	.LVL11
+ 997 02a3 CB010000 		.4byte	0x1cb
+ 998 02a7 C0020000 		.4byte	0x2c0
+ 999 02ab 0D       		.uleb128 0xd
+ 1000 02ac 01       		.uleb128 0x1
+ 1001 02ad 50       		.byte	0x50
+ 1002 02ae 01       		.uleb128 0x1
+ 1003 02af 30       		.byte	0x30
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 22
+
+
+ 1004 02b0 0D       		.uleb128 0xd
+ 1005 02b1 01       		.uleb128 0x1
+ 1006 02b2 51       		.byte	0x51
+ 1007 02b3 01       		.uleb128 0x1
+ 1008 02b4 31       		.byte	0x31
+ 1009 02b5 0D       		.uleb128 0xd
+ 1010 02b6 01       		.uleb128 0x1
+ 1011 02b7 52       		.byte	0x52
+ 1012 02b8 01       		.uleb128 0x1
+ 1013 02b9 31       		.byte	0x31
+ 1014 02ba 0D       		.uleb128 0xd
+ 1015 02bb 01       		.uleb128 0x1
+ 1016 02bc 53       		.byte	0x53
+ 1017 02bd 01       		.uleb128 0x1
+ 1018 02be 30       		.byte	0x30
+ 1019 02bf 00       		.byte	0
+ 1020 02c0 0C       		.uleb128 0xc
+ 1021 02c1 30000000 		.4byte	.LVL12
+ 1022 02c5 CB010000 		.4byte	0x1cb
+ 1023 02c9 E2020000 		.4byte	0x2e2
+ 1024 02cd 0D       		.uleb128 0xd
+ 1025 02ce 01       		.uleb128 0x1
+ 1026 02cf 50       		.byte	0x50
+ 1027 02d0 01       		.uleb128 0x1
+ 1028 02d1 30       		.byte	0x30
+ 1029 02d2 0D       		.uleb128 0xd
+ 1030 02d3 01       		.uleb128 0x1
+ 1031 02d4 51       		.byte	0x51
+ 1032 02d5 01       		.uleb128 0x1
+ 1033 02d6 30       		.byte	0x30
+ 1034 02d7 0D       		.uleb128 0xd
+ 1035 02d8 01       		.uleb128 0x1
+ 1036 02d9 52       		.byte	0x52
+ 1037 02da 01       		.uleb128 0x1
+ 1038 02db 31       		.byte	0x31
+ 1039 02dc 0D       		.uleb128 0xd
+ 1040 02dd 01       		.uleb128 0x1
+ 1041 02de 53       		.byte	0x53
+ 1042 02df 01       		.uleb128 0x1
+ 1043 02e0 31       		.byte	0x31
+ 1044 02e1 00       		.byte	0
+ 1045 02e2 0C       		.uleb128 0xc
+ 1046 02e3 3C000000 		.4byte	.LVL13
+ 1047 02e7 CB010000 		.4byte	0x1cb
+ 1048 02eb 04030000 		.4byte	0x304
+ 1049 02ef 0D       		.uleb128 0xd
+ 1050 02f0 01       		.uleb128 0x1
+ 1051 02f1 50       		.byte	0x50
+ 1052 02f2 01       		.uleb128 0x1
+ 1053 02f3 31       		.byte	0x31
+ 1054 02f4 0D       		.uleb128 0xd
+ 1055 02f5 01       		.uleb128 0x1
+ 1056 02f6 51       		.byte	0x51
+ 1057 02f7 01       		.uleb128 0x1
+ 1058 02f8 30       		.byte	0x30
+ 1059 02f9 0D       		.uleb128 0xd
+ 1060 02fa 01       		.uleb128 0x1
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 23
+
+
+ 1061 02fb 52       		.byte	0x52
+ 1062 02fc 01       		.uleb128 0x1
+ 1063 02fd 30       		.byte	0x30
+ 1064 02fe 0D       		.uleb128 0xd
+ 1065 02ff 01       		.uleb128 0x1
+ 1066 0300 53       		.byte	0x53
+ 1067 0301 01       		.uleb128 0x1
+ 1068 0302 31       		.byte	0x31
+ 1069 0303 00       		.byte	0
+ 1070 0304 0C       		.uleb128 0xc
+ 1071 0305 4A000000 		.4byte	.LVL14
+ 1072 0309 CB010000 		.4byte	0x1cb
+ 1073 030d 26030000 		.4byte	0x326
+ 1074 0311 0D       		.uleb128 0xd
+ 1075 0312 01       		.uleb128 0x1
+ 1076 0313 50       		.byte	0x50
+ 1077 0314 01       		.uleb128 0x1
+ 1078 0315 31       		.byte	0x31
+ 1079 0316 0D       		.uleb128 0xd
+ 1080 0317 01       		.uleb128 0x1
+ 1081 0318 51       		.byte	0x51
+ 1082 0319 01       		.uleb128 0x1
+ 1083 031a 30       		.byte	0x30
+ 1084 031b 0D       		.uleb128 0xd
+ 1085 031c 01       		.uleb128 0x1
+ 1086 031d 52       		.byte	0x52
+ 1087 031e 01       		.uleb128 0x1
+ 1088 031f 30       		.byte	0x30
+ 1089 0320 0D       		.uleb128 0xd
+ 1090 0321 01       		.uleb128 0x1
+ 1091 0322 53       		.byte	0x53
+ 1092 0323 01       		.uleb128 0x1
+ 1093 0324 31       		.byte	0x31
+ 1094 0325 00       		.byte	0
+ 1095 0326 0C       		.uleb128 0xc
+ 1096 0327 56000000 		.4byte	.LVL15
+ 1097 032b CB010000 		.4byte	0x1cb
+ 1098 032f 48030000 		.4byte	0x348
+ 1099 0333 0D       		.uleb128 0xd
+ 1100 0334 01       		.uleb128 0x1
+ 1101 0335 50       		.byte	0x50
+ 1102 0336 01       		.uleb128 0x1
+ 1103 0337 30       		.byte	0x30
+ 1104 0338 0D       		.uleb128 0xd
+ 1105 0339 01       		.uleb128 0x1
+ 1106 033a 51       		.byte	0x51
+ 1107 033b 01       		.uleb128 0x1
+ 1108 033c 30       		.byte	0x30
+ 1109 033d 0D       		.uleb128 0xd
+ 1110 033e 01       		.uleb128 0x1
+ 1111 033f 52       		.byte	0x52
+ 1112 0340 01       		.uleb128 0x1
+ 1113 0341 31       		.byte	0x31
+ 1114 0342 0D       		.uleb128 0xd
+ 1115 0343 01       		.uleb128 0x1
+ 1116 0344 53       		.byte	0x53
+ 1117 0345 01       		.uleb128 0x1
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 24
+
+
+ 1118 0346 31       		.byte	0x31
+ 1119 0347 00       		.byte	0
+ 1120 0348 0C       		.uleb128 0xc
+ 1121 0349 62000000 		.4byte	.LVL16
+ 1122 034d CB010000 		.4byte	0x1cb
+ 1123 0351 6A030000 		.4byte	0x36a
+ 1124 0355 0D       		.uleb128 0xd
+ 1125 0356 01       		.uleb128 0x1
+ 1126 0357 50       		.byte	0x50
+ 1127 0358 01       		.uleb128 0x1
+ 1128 0359 30       		.byte	0x30
+ 1129 035a 0D       		.uleb128 0xd
+ 1130 035b 01       		.uleb128 0x1
+ 1131 035c 51       		.byte	0x51
+ 1132 035d 01       		.uleb128 0x1
+ 1133 035e 31       		.byte	0x31
+ 1134 035f 0D       		.uleb128 0xd
+ 1135 0360 01       		.uleb128 0x1
+ 1136 0361 52       		.byte	0x52
+ 1137 0362 01       		.uleb128 0x1
+ 1138 0363 31       		.byte	0x31
+ 1139 0364 0D       		.uleb128 0xd
+ 1140 0365 01       		.uleb128 0x1
+ 1141 0366 53       		.byte	0x53
+ 1142 0367 01       		.uleb128 0x1
+ 1143 0368 30       		.byte	0x30
+ 1144 0369 00       		.byte	0
+ 1145 036a 0E       		.uleb128 0xe
+ 1146 036b 6E000000 		.4byte	.LVL17
+ 1147 036f CB010000 		.4byte	0x1cb
+ 1148 0373 0D       		.uleb128 0xd
+ 1149 0374 01       		.uleb128 0x1
+ 1150 0375 50       		.byte	0x50
+ 1151 0376 01       		.uleb128 0x1
+ 1152 0377 31       		.byte	0x31
+ 1153 0378 0D       		.uleb128 0xd
+ 1154 0379 01       		.uleb128 0x1
+ 1155 037a 51       		.byte	0x51
+ 1156 037b 01       		.uleb128 0x1
+ 1157 037c 31       		.byte	0x31
+ 1158 037d 0D       		.uleb128 0xd
+ 1159 037e 01       		.uleb128 0x1
+ 1160 037f 52       		.byte	0x52
+ 1161 0380 01       		.uleb128 0x1
+ 1162 0381 30       		.byte	0x30
+ 1163 0382 0D       		.uleb128 0xd
+ 1164 0383 01       		.uleb128 0x1
+ 1165 0384 53       		.byte	0x53
+ 1166 0385 01       		.uleb128 0x1
+ 1167 0386 30       		.byte	0x30
+ 1168 0387 00       		.byte	0
+ 1169 0388 00       		.byte	0
+ 1170 0389 08       		.uleb128 0x8
+ 1171 038a DF020000 		.4byte	.LASF30
+ 1172 038e 01       		.byte	0x1
+ 1173 038f 45       		.byte	0x45
+ 1174 0390 00000000 		.4byte	.LFB69
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 25
+
+
+ 1175 0394 74000000 		.4byte	.LFE69-.LFB69
+ 1176 0398 01       		.uleb128 0x1
+ 1177 0399 9C       		.byte	0x9c
+ 1178 039a AB040000 		.4byte	0x4ab
+ 1179 039e 0C       		.uleb128 0xc
+ 1180 039f 18000000 		.4byte	.LVL18
+ 1181 03a3 CB010000 		.4byte	0x1cb
+ 1182 03a7 C0030000 		.4byte	0x3c0
+ 1183 03ab 0D       		.uleb128 0xd
+ 1184 03ac 01       		.uleb128 0x1
+ 1185 03ad 50       		.byte	0x50
+ 1186 03ae 01       		.uleb128 0x1
+ 1187 03af 31       		.byte	0x31
+ 1188 03b0 0D       		.uleb128 0xd
+ 1189 03b1 01       		.uleb128 0x1
+ 1190 03b2 51       		.byte	0x51
+ 1191 03b3 01       		.uleb128 0x1
+ 1192 03b4 30       		.byte	0x30
+ 1193 03b5 0D       		.uleb128 0xd
+ 1194 03b6 01       		.uleb128 0x1
+ 1195 03b7 52       		.byte	0x52
+ 1196 03b8 01       		.uleb128 0x1
+ 1197 03b9 30       		.byte	0x30
+ 1198 03ba 0D       		.uleb128 0xd
+ 1199 03bb 01       		.uleb128 0x1
+ 1200 03bc 53       		.byte	0x53
+ 1201 03bd 01       		.uleb128 0x1
+ 1202 03be 30       		.byte	0x30
+ 1203 03bf 00       		.byte	0
+ 1204 03c0 0C       		.uleb128 0xc
+ 1205 03c1 24000000 		.4byte	.LVL19
+ 1206 03c5 CB010000 		.4byte	0x1cb
+ 1207 03c9 E2030000 		.4byte	0x3e2
+ 1208 03cd 0D       		.uleb128 0xd
+ 1209 03ce 01       		.uleb128 0x1
+ 1210 03cf 50       		.byte	0x50
+ 1211 03d0 01       		.uleb128 0x1
+ 1212 03d1 30       		.byte	0x30
+ 1213 03d2 0D       		.uleb128 0xd
+ 1214 03d3 01       		.uleb128 0x1
+ 1215 03d4 51       		.byte	0x51
+ 1216 03d5 01       		.uleb128 0x1
+ 1217 03d6 31       		.byte	0x31
+ 1218 03d7 0D       		.uleb128 0xd
+ 1219 03d8 01       		.uleb128 0x1
+ 1220 03d9 52       		.byte	0x52
+ 1221 03da 01       		.uleb128 0x1
+ 1222 03db 30       		.byte	0x30
+ 1223 03dc 0D       		.uleb128 0xd
+ 1224 03dd 01       		.uleb128 0x1
+ 1225 03de 53       		.byte	0x53
+ 1226 03df 01       		.uleb128 0x1
+ 1227 03e0 30       		.byte	0x30
+ 1228 03e1 00       		.byte	0
+ 1229 03e2 0C       		.uleb128 0xc
+ 1230 03e3 30000000 		.4byte	.LVL20
+ 1231 03e7 CB010000 		.4byte	0x1cb
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 26
+
+
+ 1232 03eb 04040000 		.4byte	0x404
+ 1233 03ef 0D       		.uleb128 0xd
+ 1234 03f0 01       		.uleb128 0x1
+ 1235 03f1 50       		.byte	0x50
+ 1236 03f2 01       		.uleb128 0x1
+ 1237 03f3 30       		.byte	0x30
+ 1238 03f4 0D       		.uleb128 0xd
+ 1239 03f5 01       		.uleb128 0x1
+ 1240 03f6 51       		.byte	0x51
+ 1241 03f7 01       		.uleb128 0x1
+ 1242 03f8 30       		.byte	0x30
+ 1243 03f9 0D       		.uleb128 0xd
+ 1244 03fa 01       		.uleb128 0x1
+ 1245 03fb 52       		.byte	0x52
+ 1246 03fc 01       		.uleb128 0x1
+ 1247 03fd 31       		.byte	0x31
+ 1248 03fe 0D       		.uleb128 0xd
+ 1249 03ff 01       		.uleb128 0x1
+ 1250 0400 53       		.byte	0x53
+ 1251 0401 01       		.uleb128 0x1
+ 1252 0402 30       		.byte	0x30
+ 1253 0403 00       		.byte	0
+ 1254 0404 0C       		.uleb128 0xc
+ 1255 0405 3C000000 		.4byte	.LVL21
+ 1256 0409 CB010000 		.4byte	0x1cb
+ 1257 040d 26040000 		.4byte	0x426
+ 1258 0411 0D       		.uleb128 0xd
+ 1259 0412 01       		.uleb128 0x1
+ 1260 0413 50       		.byte	0x50
+ 1261 0414 01       		.uleb128 0x1
+ 1262 0415 30       		.byte	0x30
+ 1263 0416 0D       		.uleb128 0xd
+ 1264 0417 01       		.uleb128 0x1
+ 1265 0418 51       		.byte	0x51
+ 1266 0419 01       		.uleb128 0x1
+ 1267 041a 30       		.byte	0x30
+ 1268 041b 0D       		.uleb128 0xd
+ 1269 041c 01       		.uleb128 0x1
+ 1270 041d 52       		.byte	0x52
+ 1271 041e 01       		.uleb128 0x1
+ 1272 041f 30       		.byte	0x30
+ 1273 0420 0D       		.uleb128 0xd
+ 1274 0421 01       		.uleb128 0x1
+ 1275 0422 53       		.byte	0x53
+ 1276 0423 01       		.uleb128 0x1
+ 1277 0424 31       		.byte	0x31
+ 1278 0425 00       		.byte	0
+ 1279 0426 0C       		.uleb128 0xc
+ 1280 0427 4A000000 		.4byte	.LVL22
+ 1281 042b CB010000 		.4byte	0x1cb
+ 1282 042f 48040000 		.4byte	0x448
+ 1283 0433 0D       		.uleb128 0xd
+ 1284 0434 01       		.uleb128 0x1
+ 1285 0435 50       		.byte	0x50
+ 1286 0436 01       		.uleb128 0x1
+ 1287 0437 30       		.byte	0x30
+ 1288 0438 0D       		.uleb128 0xd
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 27
+
+
+ 1289 0439 01       		.uleb128 0x1
+ 1290 043a 51       		.byte	0x51
+ 1291 043b 01       		.uleb128 0x1
+ 1292 043c 30       		.byte	0x30
+ 1293 043d 0D       		.uleb128 0xd
+ 1294 043e 01       		.uleb128 0x1
+ 1295 043f 52       		.byte	0x52
+ 1296 0440 01       		.uleb128 0x1
+ 1297 0441 30       		.byte	0x30
+ 1298 0442 0D       		.uleb128 0xd
+ 1299 0443 01       		.uleb128 0x1
+ 1300 0444 53       		.byte	0x53
+ 1301 0445 01       		.uleb128 0x1
+ 1302 0446 31       		.byte	0x31
+ 1303 0447 00       		.byte	0
+ 1304 0448 0C       		.uleb128 0xc
+ 1305 0449 56000000 		.4byte	.LVL23
+ 1306 044d CB010000 		.4byte	0x1cb
+ 1307 0451 6A040000 		.4byte	0x46a
+ 1308 0455 0D       		.uleb128 0xd
+ 1309 0456 01       		.uleb128 0x1
+ 1310 0457 50       		.byte	0x50
+ 1311 0458 01       		.uleb128 0x1
+ 1312 0459 30       		.byte	0x30
+ 1313 045a 0D       		.uleb128 0xd
+ 1314 045b 01       		.uleb128 0x1
+ 1315 045c 51       		.byte	0x51
+ 1316 045d 01       		.uleb128 0x1
+ 1317 045e 30       		.byte	0x30
+ 1318 045f 0D       		.uleb128 0xd
+ 1319 0460 01       		.uleb128 0x1
+ 1320 0461 52       		.byte	0x52
+ 1321 0462 01       		.uleb128 0x1
+ 1322 0463 31       		.byte	0x31
+ 1323 0464 0D       		.uleb128 0xd
+ 1324 0465 01       		.uleb128 0x1
+ 1325 0466 53       		.byte	0x53
+ 1326 0467 01       		.uleb128 0x1
+ 1327 0468 30       		.byte	0x30
+ 1328 0469 00       		.byte	0
+ 1329 046a 0C       		.uleb128 0xc
+ 1330 046b 62000000 		.4byte	.LVL24
+ 1331 046f CB010000 		.4byte	0x1cb
+ 1332 0473 8C040000 		.4byte	0x48c
+ 1333 0477 0D       		.uleb128 0xd
+ 1334 0478 01       		.uleb128 0x1
+ 1335 0479 50       		.byte	0x50
+ 1336 047a 01       		.uleb128 0x1
+ 1337 047b 30       		.byte	0x30
+ 1338 047c 0D       		.uleb128 0xd
+ 1339 047d 01       		.uleb128 0x1
+ 1340 047e 51       		.byte	0x51
+ 1341 047f 01       		.uleb128 0x1
+ 1342 0480 31       		.byte	0x31
+ 1343 0481 0D       		.uleb128 0xd
+ 1344 0482 01       		.uleb128 0x1
+ 1345 0483 52       		.byte	0x52
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 28
+
+
+ 1346 0484 01       		.uleb128 0x1
+ 1347 0485 30       		.byte	0x30
+ 1348 0486 0D       		.uleb128 0xd
+ 1349 0487 01       		.uleb128 0x1
+ 1350 0488 53       		.byte	0x53
+ 1351 0489 01       		.uleb128 0x1
+ 1352 048a 30       		.byte	0x30
+ 1353 048b 00       		.byte	0
+ 1354 048c 0E       		.uleb128 0xe
+ 1355 048d 6E000000 		.4byte	.LVL25
+ 1356 0491 CB010000 		.4byte	0x1cb
+ 1357 0495 0D       		.uleb128 0xd
+ 1358 0496 01       		.uleb128 0x1
+ 1359 0497 50       		.byte	0x50
+ 1360 0498 01       		.uleb128 0x1
+ 1361 0499 31       		.byte	0x31
+ 1362 049a 0D       		.uleb128 0xd
+ 1363 049b 01       		.uleb128 0x1
+ 1364 049c 51       		.byte	0x51
+ 1365 049d 01       		.uleb128 0x1
+ 1366 049e 30       		.byte	0x30
+ 1367 049f 0D       		.uleb128 0xd
+ 1368 04a0 01       		.uleb128 0x1
+ 1369 04a1 52       		.byte	0x52
+ 1370 04a2 01       		.uleb128 0x1
+ 1371 04a3 30       		.byte	0x30
+ 1372 04a4 0D       		.uleb128 0xd
+ 1373 04a5 01       		.uleb128 0x1
+ 1374 04a6 53       		.byte	0x53
+ 1375 04a7 01       		.uleb128 0x1
+ 1376 04a8 30       		.byte	0x30
+ 1377 04a9 00       		.byte	0
+ 1378 04aa 00       		.byte	0
+ 1379 04ab 08       		.uleb128 0x8
+ 1380 04ac 02020000 		.4byte	.LASF31
+ 1381 04b0 01       		.byte	0x1
+ 1382 04b1 72       		.byte	0x72
+ 1383 04b2 00000000 		.4byte	.LFB71
+ 1384 04b6 14000000 		.4byte	.LFE71-.LFB71
+ 1385 04ba 01       		.uleb128 0x1
+ 1386 04bb 9C       		.byte	0x9c
+ 1387 04bc F0040000 		.4byte	0x4f0
+ 1388 04c0 12       		.uleb128 0x12
+ 1389 04c1 84010000 		.4byte	.LASF32
+ 1390 04c5 01       		.byte	0x1
+ 1391 04c6 72       		.byte	0x72
+ 1392 04c7 A2000000 		.4byte	0xa2
+ 1393 04cb 84000000 		.4byte	.LLST4
+ 1394 04cf 13       		.uleb128 0x13
+ 1395 04d0 04000000 		.4byte	.LBB2
+ 1396 04d4 0E000000 		.4byte	.LBE2-.LBB2
+ 1397 04d8 14       		.uleb128 0x14
+ 1398 04d9 6900     		.ascii	"i\000"
+ 1399 04db 01       		.byte	0x1
+ 1400 04dc 74       		.byte	0x74
+ 1401 04dd A2000000 		.4byte	0xa2
+ 1402 04e1 A2000000 		.4byte	.LLST5
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 29
+
+
+ 1403 04e5 09       		.uleb128 0x9
+ 1404 04e6 0C000000 		.4byte	.LVL29
+ 1405 04ea 89030000 		.4byte	0x389
+ 1406 04ee 00       		.byte	0
+ 1407 04ef 00       		.byte	0
+ 1408 04f0 08       		.uleb128 0x8
+ 1409 04f1 E9020000 		.4byte	.LASF34
+ 1410 04f5 01       		.byte	0x1
+ 1411 04f6 7A       		.byte	0x7a
+ 1412 04f7 00000000 		.4byte	.LFB72
+ 1413 04fb 24000000 		.4byte	.LFE72-.LFB72
+ 1414 04ff 01       		.uleb128 0x1
+ 1415 0500 9C       		.byte	0x9c
+ 1416 0501 0F050000 		.4byte	0x50f
+ 1417 0505 09       		.uleb128 0x9
+ 1418 0506 14000000 		.4byte	.LVL31
+ 1419 050a 89030000 		.4byte	0x389
+ 1420 050e 00       		.byte	0
+ 1421 050f 08       		.uleb128 0x8
+ 1422 0510 45020000 		.4byte	.LASF35
+ 1423 0514 01       		.byte	0x1
+ 1424 0515 57       		.byte	0x57
+ 1425 0516 00000000 		.4byte	.LFB70
+ 1426 051a D4000000 		.4byte	.LFE70-.LFB70
+ 1427 051e 01       		.uleb128 0x1
+ 1428 051f 9C       		.byte	0x9c
+ 1429 0520 41070000 		.4byte	0x741
+ 1430 0524 0C       		.uleb128 0xc
+ 1431 0525 18000000 		.4byte	.LVL32
+ 1432 0529 CB010000 		.4byte	0x1cb
+ 1433 052d 46050000 		.4byte	0x546
+ 1434 0531 0D       		.uleb128 0xd
+ 1435 0532 01       		.uleb128 0x1
+ 1436 0533 50       		.byte	0x50
+ 1437 0534 01       		.uleb128 0x1
+ 1438 0535 31       		.byte	0x31
+ 1439 0536 0D       		.uleb128 0xd
+ 1440 0537 01       		.uleb128 0x1
+ 1441 0538 51       		.byte	0x51
+ 1442 0539 01       		.uleb128 0x1
+ 1443 053a 31       		.byte	0x31
+ 1444 053b 0D       		.uleb128 0xd
+ 1445 053c 01       		.uleb128 0x1
+ 1446 053d 52       		.byte	0x52
+ 1447 053e 01       		.uleb128 0x1
+ 1448 053f 30       		.byte	0x30
+ 1449 0540 0D       		.uleb128 0xd
+ 1450 0541 01       		.uleb128 0x1
+ 1451 0542 53       		.byte	0x53
+ 1452 0543 01       		.uleb128 0x1
+ 1453 0544 30       		.byte	0x30
+ 1454 0545 00       		.byte	0
+ 1455 0546 0C       		.uleb128 0xc
+ 1456 0547 24000000 		.4byte	.LVL33
+ 1457 054b CB010000 		.4byte	0x1cb
+ 1458 054f 68050000 		.4byte	0x568
+ 1459 0553 0D       		.uleb128 0xd
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 30
+
+
+ 1460 0554 01       		.uleb128 0x1
+ 1461 0555 50       		.byte	0x50
+ 1462 0556 01       		.uleb128 0x1
+ 1463 0557 30       		.byte	0x30
+ 1464 0558 0D       		.uleb128 0xd
+ 1465 0559 01       		.uleb128 0x1
+ 1466 055a 51       		.byte	0x51
+ 1467 055b 01       		.uleb128 0x1
+ 1468 055c 31       		.byte	0x31
+ 1469 055d 0D       		.uleb128 0xd
+ 1470 055e 01       		.uleb128 0x1
+ 1471 055f 52       		.byte	0x52
+ 1472 0560 01       		.uleb128 0x1
+ 1473 0561 30       		.byte	0x30
+ 1474 0562 0D       		.uleb128 0xd
+ 1475 0563 01       		.uleb128 0x1
+ 1476 0564 53       		.byte	0x53
+ 1477 0565 01       		.uleb128 0x1
+ 1478 0566 30       		.byte	0x30
+ 1479 0567 00       		.byte	0
+ 1480 0568 0C       		.uleb128 0xc
+ 1481 0569 30000000 		.4byte	.LVL34
+ 1482 056d CB010000 		.4byte	0x1cb
+ 1483 0571 8A050000 		.4byte	0x58a
+ 1484 0575 0D       		.uleb128 0xd
+ 1485 0576 01       		.uleb128 0x1
+ 1486 0577 50       		.byte	0x50
+ 1487 0578 01       		.uleb128 0x1
+ 1488 0579 30       		.byte	0x30
+ 1489 057a 0D       		.uleb128 0xd
+ 1490 057b 01       		.uleb128 0x1
+ 1491 057c 51       		.byte	0x51
+ 1492 057d 01       		.uleb128 0x1
+ 1493 057e 31       		.byte	0x31
+ 1494 057f 0D       		.uleb128 0xd
+ 1495 0580 01       		.uleb128 0x1
+ 1496 0581 52       		.byte	0x52
+ 1497 0582 01       		.uleb128 0x1
+ 1498 0583 31       		.byte	0x31
+ 1499 0584 0D       		.uleb128 0xd
+ 1500 0585 01       		.uleb128 0x1
+ 1501 0586 53       		.byte	0x53
+ 1502 0587 01       		.uleb128 0x1
+ 1503 0588 30       		.byte	0x30
+ 1504 0589 00       		.byte	0
+ 1505 058a 0C       		.uleb128 0xc
+ 1506 058b 3C000000 		.4byte	.LVL35
+ 1507 058f CB010000 		.4byte	0x1cb
+ 1508 0593 AC050000 		.4byte	0x5ac
+ 1509 0597 0D       		.uleb128 0xd
+ 1510 0598 01       		.uleb128 0x1
+ 1511 0599 50       		.byte	0x50
+ 1512 059a 01       		.uleb128 0x1
+ 1513 059b 30       		.byte	0x30
+ 1514 059c 0D       		.uleb128 0xd
+ 1515 059d 01       		.uleb128 0x1
+ 1516 059e 51       		.byte	0x51
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 31
+
+
+ 1517 059f 01       		.uleb128 0x1
+ 1518 05a0 30       		.byte	0x30
+ 1519 05a1 0D       		.uleb128 0xd
+ 1520 05a2 01       		.uleb128 0x1
+ 1521 05a3 52       		.byte	0x52
+ 1522 05a4 01       		.uleb128 0x1
+ 1523 05a5 31       		.byte	0x31
+ 1524 05a6 0D       		.uleb128 0xd
+ 1525 05a7 01       		.uleb128 0x1
+ 1526 05a8 53       		.byte	0x53
+ 1527 05a9 01       		.uleb128 0x1
+ 1528 05aa 30       		.byte	0x30
+ 1529 05ab 00       		.byte	0
+ 1530 05ac 0C       		.uleb128 0xc
+ 1531 05ad 48000000 		.4byte	.LVL36
+ 1532 05b1 CB010000 		.4byte	0x1cb
+ 1533 05b5 CE050000 		.4byte	0x5ce
+ 1534 05b9 0D       		.uleb128 0xd
+ 1535 05ba 01       		.uleb128 0x1
+ 1536 05bb 50       		.byte	0x50
+ 1537 05bc 01       		.uleb128 0x1
+ 1538 05bd 30       		.byte	0x30
+ 1539 05be 0D       		.uleb128 0xd
+ 1540 05bf 01       		.uleb128 0x1
+ 1541 05c0 51       		.byte	0x51
+ 1542 05c1 01       		.uleb128 0x1
+ 1543 05c2 30       		.byte	0x30
+ 1544 05c3 0D       		.uleb128 0xd
+ 1545 05c4 01       		.uleb128 0x1
+ 1546 05c5 52       		.byte	0x52
+ 1547 05c6 01       		.uleb128 0x1
+ 1548 05c7 31       		.byte	0x31
+ 1549 05c8 0D       		.uleb128 0xd
+ 1550 05c9 01       		.uleb128 0x1
+ 1551 05ca 53       		.byte	0x53
+ 1552 05cb 01       		.uleb128 0x1
+ 1553 05cc 31       		.byte	0x31
+ 1554 05cd 00       		.byte	0
+ 1555 05ce 0C       		.uleb128 0xc
+ 1556 05cf 54000000 		.4byte	.LVL37
+ 1557 05d3 CB010000 		.4byte	0x1cb
+ 1558 05d7 F0050000 		.4byte	0x5f0
+ 1559 05db 0D       		.uleb128 0xd
+ 1560 05dc 01       		.uleb128 0x1
+ 1561 05dd 50       		.byte	0x50
+ 1562 05de 01       		.uleb128 0x1
+ 1563 05df 30       		.byte	0x30
+ 1564 05e0 0D       		.uleb128 0xd
+ 1565 05e1 01       		.uleb128 0x1
+ 1566 05e2 51       		.byte	0x51
+ 1567 05e3 01       		.uleb128 0x1
+ 1568 05e4 30       		.byte	0x30
+ 1569 05e5 0D       		.uleb128 0xd
+ 1570 05e6 01       		.uleb128 0x1
+ 1571 05e7 52       		.byte	0x52
+ 1572 05e8 01       		.uleb128 0x1
+ 1573 05e9 30       		.byte	0x30
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 32
+
+
+ 1574 05ea 0D       		.uleb128 0xd
+ 1575 05eb 01       		.uleb128 0x1
+ 1576 05ec 53       		.byte	0x53
+ 1577 05ed 01       		.uleb128 0x1
+ 1578 05ee 31       		.byte	0x31
+ 1579 05ef 00       		.byte	0
+ 1580 05f0 0C       		.uleb128 0xc
+ 1581 05f1 60000000 		.4byte	.LVL38
+ 1582 05f5 CB010000 		.4byte	0x1cb
+ 1583 05f9 12060000 		.4byte	0x612
+ 1584 05fd 0D       		.uleb128 0xd
+ 1585 05fe 01       		.uleb128 0x1
+ 1586 05ff 50       		.byte	0x50
+ 1587 0600 01       		.uleb128 0x1
+ 1588 0601 31       		.byte	0x31
+ 1589 0602 0D       		.uleb128 0xd
+ 1590 0603 01       		.uleb128 0x1
+ 1591 0604 51       		.byte	0x51
+ 1592 0605 01       		.uleb128 0x1
+ 1593 0606 30       		.byte	0x30
+ 1594 0607 0D       		.uleb128 0xd
+ 1595 0608 01       		.uleb128 0x1
+ 1596 0609 52       		.byte	0x52
+ 1597 060a 01       		.uleb128 0x1
+ 1598 060b 30       		.byte	0x30
+ 1599 060c 0D       		.uleb128 0xd
+ 1600 060d 01       		.uleb128 0x1
+ 1601 060e 53       		.byte	0x53
+ 1602 060f 01       		.uleb128 0x1
+ 1603 0610 31       		.byte	0x31
+ 1604 0611 00       		.byte	0
+ 1605 0612 0C       		.uleb128 0xc
+ 1606 0613 6C000000 		.4byte	.LVL39
+ 1607 0617 CB010000 		.4byte	0x1cb
+ 1608 061b 34060000 		.4byte	0x634
+ 1609 061f 0D       		.uleb128 0xd
+ 1610 0620 01       		.uleb128 0x1
+ 1611 0621 50       		.byte	0x50
+ 1612 0622 01       		.uleb128 0x1
+ 1613 0623 31       		.byte	0x31
+ 1614 0624 0D       		.uleb128 0xd
+ 1615 0625 01       		.uleb128 0x1
+ 1616 0626 51       		.byte	0x51
+ 1617 0627 01       		.uleb128 0x1
+ 1618 0628 30       		.byte	0x30
+ 1619 0629 0D       		.uleb128 0xd
+ 1620 062a 01       		.uleb128 0x1
+ 1621 062b 52       		.byte	0x52
+ 1622 062c 01       		.uleb128 0x1
+ 1623 062d 30       		.byte	0x30
+ 1624 062e 0D       		.uleb128 0xd
+ 1625 062f 01       		.uleb128 0x1
+ 1626 0630 53       		.byte	0x53
+ 1627 0631 01       		.uleb128 0x1
+ 1628 0632 30       		.byte	0x30
+ 1629 0633 00       		.byte	0
+ 1630 0634 0C       		.uleb128 0xc
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 33
+
+
+ 1631 0635 7A000000 		.4byte	.LVL40
+ 1632 0639 CB010000 		.4byte	0x1cb
+ 1633 063d 56060000 		.4byte	0x656
+ 1634 0641 0D       		.uleb128 0xd
+ 1635 0642 01       		.uleb128 0x1
+ 1636 0643 50       		.byte	0x50
+ 1637 0644 01       		.uleb128 0x1
+ 1638 0645 31       		.byte	0x31
+ 1639 0646 0D       		.uleb128 0xd
+ 1640 0647 01       		.uleb128 0x1
+ 1641 0648 51       		.byte	0x51
+ 1642 0649 01       		.uleb128 0x1
+ 1643 064a 30       		.byte	0x30
+ 1644 064b 0D       		.uleb128 0xd
+ 1645 064c 01       		.uleb128 0x1
+ 1646 064d 52       		.byte	0x52
+ 1647 064e 01       		.uleb128 0x1
+ 1648 064f 30       		.byte	0x30
+ 1649 0650 0D       		.uleb128 0xd
+ 1650 0651 01       		.uleb128 0x1
+ 1651 0652 53       		.byte	0x53
+ 1652 0653 01       		.uleb128 0x1
+ 1653 0654 30       		.byte	0x30
+ 1654 0655 00       		.byte	0
+ 1655 0656 0C       		.uleb128 0xc
+ 1656 0657 86000000 		.4byte	.LVL41
+ 1657 065b CB010000 		.4byte	0x1cb
+ 1658 065f 78060000 		.4byte	0x678
+ 1659 0663 0D       		.uleb128 0xd
+ 1660 0664 01       		.uleb128 0x1
+ 1661 0665 50       		.byte	0x50
+ 1662 0666 01       		.uleb128 0x1
+ 1663 0667 31       		.byte	0x31
+ 1664 0668 0D       		.uleb128 0xd
+ 1665 0669 01       		.uleb128 0x1
+ 1666 066a 51       		.byte	0x51
+ 1667 066b 01       		.uleb128 0x1
+ 1668 066c 30       		.byte	0x30
+ 1669 066d 0D       		.uleb128 0xd
+ 1670 066e 01       		.uleb128 0x1
+ 1671 066f 52       		.byte	0x52
+ 1672 0670 01       		.uleb128 0x1
+ 1673 0671 30       		.byte	0x30
+ 1674 0672 0D       		.uleb128 0xd
+ 1675 0673 01       		.uleb128 0x1
+ 1676 0674 53       		.byte	0x53
+ 1677 0675 01       		.uleb128 0x1
+ 1678 0676 31       		.byte	0x31
+ 1679 0677 00       		.byte	0
+ 1680 0678 0C       		.uleb128 0xc
+ 1681 0679 92000000 		.4byte	.LVL42
+ 1682 067d CB010000 		.4byte	0x1cb
+ 1683 0681 9A060000 		.4byte	0x69a
+ 1684 0685 0D       		.uleb128 0xd
+ 1685 0686 01       		.uleb128 0x1
+ 1686 0687 50       		.byte	0x50
+ 1687 0688 01       		.uleb128 0x1
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 34
+
+
+ 1688 0689 30       		.byte	0x30
+ 1689 068a 0D       		.uleb128 0xd
+ 1690 068b 01       		.uleb128 0x1
+ 1691 068c 51       		.byte	0x51
+ 1692 068d 01       		.uleb128 0x1
+ 1693 068e 30       		.byte	0x30
+ 1694 068f 0D       		.uleb128 0xd
+ 1695 0690 01       		.uleb128 0x1
+ 1696 0691 52       		.byte	0x52
+ 1697 0692 01       		.uleb128 0x1
+ 1698 0693 30       		.byte	0x30
+ 1699 0694 0D       		.uleb128 0xd
+ 1700 0695 01       		.uleb128 0x1
+ 1701 0696 53       		.byte	0x53
+ 1702 0697 01       		.uleb128 0x1
+ 1703 0698 31       		.byte	0x31
+ 1704 0699 00       		.byte	0
+ 1705 069a 0C       		.uleb128 0xc
+ 1706 069b 9E000000 		.4byte	.LVL43
+ 1707 069f CB010000 		.4byte	0x1cb
+ 1708 06a3 BC060000 		.4byte	0x6bc
+ 1709 06a7 0D       		.uleb128 0xd
+ 1710 06a8 01       		.uleb128 0x1
+ 1711 06a9 50       		.byte	0x50
+ 1712 06aa 01       		.uleb128 0x1
+ 1713 06ab 30       		.byte	0x30
+ 1714 06ac 0D       		.uleb128 0xd
+ 1715 06ad 01       		.uleb128 0x1
+ 1716 06ae 51       		.byte	0x51
+ 1717 06af 01       		.uleb128 0x1
+ 1718 06b0 30       		.byte	0x30
+ 1719 06b1 0D       		.uleb128 0xd
+ 1720 06b2 01       		.uleb128 0x1
+ 1721 06b3 52       		.byte	0x52
+ 1722 06b4 01       		.uleb128 0x1
+ 1723 06b5 31       		.byte	0x31
+ 1724 06b6 0D       		.uleb128 0xd
+ 1725 06b7 01       		.uleb128 0x1
+ 1726 06b8 53       		.byte	0x53
+ 1727 06b9 01       		.uleb128 0x1
+ 1728 06ba 31       		.byte	0x31
+ 1729 06bb 00       		.byte	0
+ 1730 06bc 0C       		.uleb128 0xc
+ 1731 06bd AA000000 		.4byte	.LVL44
+ 1732 06c1 CB010000 		.4byte	0x1cb
+ 1733 06c5 DE060000 		.4byte	0x6de
+ 1734 06c9 0D       		.uleb128 0xd
+ 1735 06ca 01       		.uleb128 0x1
+ 1736 06cb 50       		.byte	0x50
+ 1737 06cc 01       		.uleb128 0x1
+ 1738 06cd 30       		.byte	0x30
+ 1739 06ce 0D       		.uleb128 0xd
+ 1740 06cf 01       		.uleb128 0x1
+ 1741 06d0 51       		.byte	0x51
+ 1742 06d1 01       		.uleb128 0x1
+ 1743 06d2 30       		.byte	0x30
+ 1744 06d3 0D       		.uleb128 0xd
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 35
+
+
+ 1745 06d4 01       		.uleb128 0x1
+ 1746 06d5 52       		.byte	0x52
+ 1747 06d6 01       		.uleb128 0x1
+ 1748 06d7 31       		.byte	0x31
+ 1749 06d8 0D       		.uleb128 0xd
+ 1750 06d9 01       		.uleb128 0x1
+ 1751 06da 53       		.byte	0x53
+ 1752 06db 01       		.uleb128 0x1
+ 1753 06dc 30       		.byte	0x30
+ 1754 06dd 00       		.byte	0
+ 1755 06de 0C       		.uleb128 0xc
+ 1756 06df B6000000 		.4byte	.LVL45
+ 1757 06e3 CB010000 		.4byte	0x1cb
+ 1758 06e7 00070000 		.4byte	0x700
+ 1759 06eb 0D       		.uleb128 0xd
+ 1760 06ec 01       		.uleb128 0x1
+ 1761 06ed 50       		.byte	0x50
+ 1762 06ee 01       		.uleb128 0x1
+ 1763 06ef 30       		.byte	0x30
+ 1764 06f0 0D       		.uleb128 0xd
+ 1765 06f1 01       		.uleb128 0x1
+ 1766 06f2 51       		.byte	0x51
+ 1767 06f3 01       		.uleb128 0x1
+ 1768 06f4 31       		.byte	0x31
+ 1769 06f5 0D       		.uleb128 0xd
+ 1770 06f6 01       		.uleb128 0x1
+ 1771 06f7 52       		.byte	0x52
+ 1772 06f8 01       		.uleb128 0x1
+ 1773 06f9 31       		.byte	0x31
+ 1774 06fa 0D       		.uleb128 0xd
+ 1775 06fb 01       		.uleb128 0x1
+ 1776 06fc 53       		.byte	0x53
+ 1777 06fd 01       		.uleb128 0x1
+ 1778 06fe 30       		.byte	0x30
+ 1779 06ff 00       		.byte	0
+ 1780 0700 0C       		.uleb128 0xc
+ 1781 0701 C2000000 		.4byte	.LVL46
+ 1782 0705 CB010000 		.4byte	0x1cb
+ 1783 0709 22070000 		.4byte	0x722
+ 1784 070d 0D       		.uleb128 0xd
+ 1785 070e 01       		.uleb128 0x1
+ 1786 070f 50       		.byte	0x50
+ 1787 0710 01       		.uleb128 0x1
+ 1788 0711 30       		.byte	0x30
+ 1789 0712 0D       		.uleb128 0xd
+ 1790 0713 01       		.uleb128 0x1
+ 1791 0714 51       		.byte	0x51
+ 1792 0715 01       		.uleb128 0x1
+ 1793 0716 31       		.byte	0x31
+ 1794 0717 0D       		.uleb128 0xd
+ 1795 0718 01       		.uleb128 0x1
+ 1796 0719 52       		.byte	0x52
+ 1797 071a 01       		.uleb128 0x1
+ 1798 071b 30       		.byte	0x30
+ 1799 071c 0D       		.uleb128 0xd
+ 1800 071d 01       		.uleb128 0x1
+ 1801 071e 53       		.byte	0x53
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 36
+
+
+ 1802 071f 01       		.uleb128 0x1
+ 1803 0720 30       		.byte	0x30
+ 1804 0721 00       		.byte	0
+ 1805 0722 0E       		.uleb128 0xe
+ 1806 0723 CE000000 		.4byte	.LVL47
+ 1807 0727 CB010000 		.4byte	0x1cb
+ 1808 072b 0D       		.uleb128 0xd
+ 1809 072c 01       		.uleb128 0x1
+ 1810 072d 50       		.byte	0x50
+ 1811 072e 01       		.uleb128 0x1
+ 1812 072f 31       		.byte	0x31
+ 1813 0730 0D       		.uleb128 0xd
+ 1814 0731 01       		.uleb128 0x1
+ 1815 0732 51       		.byte	0x51
+ 1816 0733 01       		.uleb128 0x1
+ 1817 0734 31       		.byte	0x31
+ 1818 0735 0D       		.uleb128 0xd
+ 1819 0736 01       		.uleb128 0x1
+ 1820 0737 52       		.byte	0x52
+ 1821 0738 01       		.uleb128 0x1
+ 1822 0739 30       		.byte	0x30
+ 1823 073a 0D       		.uleb128 0xd
+ 1824 073b 01       		.uleb128 0x1
+ 1825 073c 53       		.byte	0x53
+ 1826 073d 01       		.uleb128 0x1
+ 1827 073e 30       		.byte	0x30
+ 1828 073f 00       		.byte	0
+ 1829 0740 00       		.byte	0
+ 1830 0741 15       		.uleb128 0x15
+ 1831 0742 1E020000 		.4byte	.LASF36
+ 1832 0746 01       		.byte	0x1
+ 1833 0747 10       		.byte	0x10
+ 1834 0748 04010000 		.4byte	0x104
+ 1835 074c 05       		.uleb128 0x5
+ 1836 074d 03       		.byte	0x3
+ 1837 074e 00000000 		.4byte	speed
+ 1838 0752 15       		.uleb128 0x15
+ 1839 0753 61000000 		.4byte	.LASF37
+ 1840 0757 01       		.byte	0x1
+ 1841 0758 11       		.byte	0x11
+ 1842 0759 6A070000 		.4byte	0x76a
+ 1843 075d 05       		.uleb128 0x5
+ 1844 075e 03       		.byte	0x3
+ 1845 075f 00000000 		.4byte	direction
+ 1846 0763 02       		.uleb128 0x2
+ 1847 0764 01       		.byte	0x1
+ 1848 0765 02       		.byte	0x2
+ 1849 0766 D1020000 		.4byte	.LASF38
+ 1850 076a 07       		.uleb128 0x7
+ 1851 076b 63070000 		.4byte	0x763
+ 1852 076f 15       		.uleb128 0x15
+ 1853 0770 71020000 		.4byte	.LASF39
+ 1854 0774 01       		.byte	0x1
+ 1855 0775 12       		.byte	0x12
+ 1856 0776 80070000 		.4byte	0x780
+ 1857 077a 05       		.uleb128 0x5
+ 1858 077b 03       		.byte	0x3
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 37
+
+
+ 1859 077c 00000000 		.4byte	currentDrive
+ 1860 0780 07       		.uleb128 0x7
+ 1861 0781 C2000000 		.4byte	0xc2
+ 1862 0785 15       		.uleb128 0x15
+ 1863 0786 2B000000 		.4byte	.LASF40
+ 1864 078a 01       		.byte	0x1
+ 1865 078b 13       		.byte	0x13
+ 1866 078c FF000000 		.4byte	0xff
+ 1867 0790 05       		.uleb128 0x5
+ 1868 0791 03       		.byte	0x3
+ 1869 0792 00000000 		.4byte	currentStep
+ 1870 0796 16       		.uleb128 0x16
+ 1871 0797 6E010000 		.4byte	.LASF41
+ 1872 079b 04       		.byte	0x4
+ 1873 079c 1207     		.2byte	0x712
+ 1874 079e A2070000 		.4byte	0x7a2
+ 1875 07a2 07       		.uleb128 0x7
+ 1876 07a3 97000000 		.4byte	0x97
+ 1877 07a7 17       		.uleb128 0x17
+ 1878 07a8 13000000 		.4byte	.LASF42
+ 1879 07ac 13000000 		.4byte	.LASF42
+ 1880 07b0 05       		.byte	0x5
+ 1881 07b1 5A       		.byte	0x5a
+ 1882 07b2 17       		.uleb128 0x17
+ 1883 07b3 47000000 		.4byte	.LASF43
+ 1884 07b7 47000000 		.4byte	.LASF43
+ 1885 07bb 06       		.byte	0x6
+ 1886 07bc FD       		.byte	0xfd
+ 1887 07bd 17       		.uleb128 0x17
+ 1888 07be C0020000 		.4byte	.LASF44
+ 1889 07c2 C0020000 		.4byte	.LASF44
+ 1890 07c6 07       		.byte	0x7
+ 1891 07c7 8B       		.byte	0x8b
+ 1892 07c8 17       		.uleb128 0x17
+ 1893 07c9 7B010000 		.4byte	.LASF45
+ 1894 07cd 7B010000 		.4byte	.LASF45
+ 1895 07d1 08       		.byte	0x8
+ 1896 07d2 26       		.byte	0x26
+ 1897 07d3 17       		.uleb128 0x17
+ 1898 07d4 00000000 		.4byte	.LASF46
+ 1899 07d8 00000000 		.4byte	.LASF46
+ 1900 07dc 09       		.byte	0x9
+ 1901 07dd 26       		.byte	0x26
+ 1902 07de 17       		.uleb128 0x17
+ 1903 07df 07020000 		.4byte	.LASF47
+ 1904 07e3 07020000 		.4byte	.LASF47
+ 1905 07e7 0A       		.byte	0xa
+ 1906 07e8 26       		.byte	0x26
+ 1907 07e9 17       		.uleb128 0x17
+ 1908 07ea 4D010000 		.4byte	.LASF48
+ 1909 07ee 4D010000 		.4byte	.LASF48
+ 1910 07f2 0B       		.byte	0xb
+ 1911 07f3 26       		.byte	0x26
+ 1912 07f4 17       		.uleb128 0x17
+ 1913 07f5 D7020000 		.4byte	.LASF49
+ 1914 07f9 D7020000 		.4byte	.LASF49
+ 1915 07fd 0C       		.byte	0xc
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 38
+
+
+ 1916 07fe 76       		.byte	0x76
+ 1917 07ff 00       		.byte	0
+ 1918              		.section	.debug_abbrev,"",%progbits
+ 1919              	.Ldebug_abbrev0:
+ 1920 0000 01       		.uleb128 0x1
+ 1921 0001 11       		.uleb128 0x11
+ 1922 0002 01       		.byte	0x1
+ 1923 0003 25       		.uleb128 0x25
+ 1924 0004 0E       		.uleb128 0xe
+ 1925 0005 13       		.uleb128 0x13
+ 1926 0006 0B       		.uleb128 0xb
+ 1927 0007 03       		.uleb128 0x3
+ 1928 0008 0E       		.uleb128 0xe
+ 1929 0009 1B       		.uleb128 0x1b
+ 1930 000a 0E       		.uleb128 0xe
+ 1931 000b 55       		.uleb128 0x55
+ 1932 000c 17       		.uleb128 0x17
+ 1933 000d 11       		.uleb128 0x11
+ 1934 000e 01       		.uleb128 0x1
+ 1935 000f 10       		.uleb128 0x10
+ 1936 0010 17       		.uleb128 0x17
+ 1937 0011 00       		.byte	0
+ 1938 0012 00       		.byte	0
+ 1939 0013 02       		.uleb128 0x2
+ 1940 0014 24       		.uleb128 0x24
+ 1941 0015 00       		.byte	0
+ 1942 0016 0B       		.uleb128 0xb
+ 1943 0017 0B       		.uleb128 0xb
+ 1944 0018 3E       		.uleb128 0x3e
+ 1945 0019 0B       		.uleb128 0xb
+ 1946 001a 03       		.uleb128 0x3
+ 1947 001b 0E       		.uleb128 0xe
+ 1948 001c 00       		.byte	0
+ 1949 001d 00       		.byte	0
+ 1950 001e 03       		.uleb128 0x3
+ 1951 001f 16       		.uleb128 0x16
+ 1952 0020 00       		.byte	0
+ 1953 0021 03       		.uleb128 0x3
+ 1954 0022 0E       		.uleb128 0xe
+ 1955 0023 3A       		.uleb128 0x3a
+ 1956 0024 0B       		.uleb128 0xb
+ 1957 0025 3B       		.uleb128 0x3b
+ 1958 0026 0B       		.uleb128 0xb
+ 1959 0027 49       		.uleb128 0x49
+ 1960 0028 13       		.uleb128 0x13
+ 1961 0029 00       		.byte	0
+ 1962 002a 00       		.byte	0
+ 1963 002b 04       		.uleb128 0x4
+ 1964 002c 24       		.uleb128 0x24
+ 1965 002d 00       		.byte	0
+ 1966 002e 0B       		.uleb128 0xb
+ 1967 002f 0B       		.uleb128 0xb
+ 1968 0030 3E       		.uleb128 0x3e
+ 1969 0031 0B       		.uleb128 0xb
+ 1970 0032 03       		.uleb128 0x3
+ 1971 0033 08       		.uleb128 0x8
+ 1972 0034 00       		.byte	0
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 39
+
+
+ 1973 0035 00       		.byte	0
+ 1974 0036 05       		.uleb128 0x5
+ 1975 0037 04       		.uleb128 0x4
+ 1976 0038 01       		.byte	0x1
+ 1977 0039 03       		.uleb128 0x3
+ 1978 003a 0E       		.uleb128 0xe
+ 1979 003b 0B       		.uleb128 0xb
+ 1980 003c 0B       		.uleb128 0xb
+ 1981 003d 49       		.uleb128 0x49
+ 1982 003e 13       		.uleb128 0x13
+ 1983 003f 3A       		.uleb128 0x3a
+ 1984 0040 0B       		.uleb128 0xb
+ 1985 0041 3B       		.uleb128 0x3b
+ 1986 0042 0B       		.uleb128 0xb
+ 1987 0043 01       		.uleb128 0x1
+ 1988 0044 13       		.uleb128 0x13
+ 1989 0045 00       		.byte	0
+ 1990 0046 00       		.byte	0
+ 1991 0047 06       		.uleb128 0x6
+ 1992 0048 28       		.uleb128 0x28
+ 1993 0049 00       		.byte	0
+ 1994 004a 03       		.uleb128 0x3
+ 1995 004b 0E       		.uleb128 0xe
+ 1996 004c 1C       		.uleb128 0x1c
+ 1997 004d 0B       		.uleb128 0xb
+ 1998 004e 00       		.byte	0
+ 1999 004f 00       		.byte	0
+ 2000 0050 07       		.uleb128 0x7
+ 2001 0051 35       		.uleb128 0x35
+ 2002 0052 00       		.byte	0
+ 2003 0053 49       		.uleb128 0x49
+ 2004 0054 13       		.uleb128 0x13
+ 2005 0055 00       		.byte	0
+ 2006 0056 00       		.byte	0
+ 2007 0057 08       		.uleb128 0x8
+ 2008 0058 2E       		.uleb128 0x2e
+ 2009 0059 01       		.byte	0x1
+ 2010 005a 3F       		.uleb128 0x3f
+ 2011 005b 19       		.uleb128 0x19
+ 2012 005c 03       		.uleb128 0x3
+ 2013 005d 0E       		.uleb128 0xe
+ 2014 005e 3A       		.uleb128 0x3a
+ 2015 005f 0B       		.uleb128 0xb
+ 2016 0060 3B       		.uleb128 0x3b
+ 2017 0061 0B       		.uleb128 0xb
+ 2018 0062 27       		.uleb128 0x27
+ 2019 0063 19       		.uleb128 0x19
+ 2020 0064 11       		.uleb128 0x11
+ 2021 0065 01       		.uleb128 0x1
+ 2022 0066 12       		.uleb128 0x12
+ 2023 0067 06       		.uleb128 0x6
+ 2024 0068 40       		.uleb128 0x40
+ 2025 0069 18       		.uleb128 0x18
+ 2026 006a 9742     		.uleb128 0x2117
+ 2027 006c 19       		.uleb128 0x19
+ 2028 006d 01       		.uleb128 0x1
+ 2029 006e 13       		.uleb128 0x13
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 40
+
+
+ 2030 006f 00       		.byte	0
+ 2031 0070 00       		.byte	0
+ 2032 0071 09       		.uleb128 0x9
+ 2033 0072 898201   		.uleb128 0x4109
+ 2034 0075 00       		.byte	0
+ 2035 0076 11       		.uleb128 0x11
+ 2036 0077 01       		.uleb128 0x1
+ 2037 0078 31       		.uleb128 0x31
+ 2038 0079 13       		.uleb128 0x13
+ 2039 007a 00       		.byte	0
+ 2040 007b 00       		.byte	0
+ 2041 007c 0A       		.uleb128 0xa
+ 2042 007d 2E       		.uleb128 0x2e
+ 2043 007e 00       		.byte	0
+ 2044 007f 3F       		.uleb128 0x3f
+ 2045 0080 19       		.uleb128 0x19
+ 2046 0081 03       		.uleb128 0x3
+ 2047 0082 0E       		.uleb128 0xe
+ 2048 0083 3A       		.uleb128 0x3a
+ 2049 0084 0B       		.uleb128 0xb
+ 2050 0085 3B       		.uleb128 0x3b
+ 2051 0086 0B       		.uleb128 0xb
+ 2052 0087 27       		.uleb128 0x27
+ 2053 0088 19       		.uleb128 0x19
+ 2054 0089 11       		.uleb128 0x11
+ 2055 008a 01       		.uleb128 0x1
+ 2056 008b 12       		.uleb128 0x12
+ 2057 008c 06       		.uleb128 0x6
+ 2058 008d 40       		.uleb128 0x40
+ 2059 008e 18       		.uleb128 0x18
+ 2060 008f 9742     		.uleb128 0x2117
+ 2061 0091 19       		.uleb128 0x19
+ 2062 0092 00       		.byte	0
+ 2063 0093 00       		.byte	0
+ 2064 0094 0B       		.uleb128 0xb
+ 2065 0095 34       		.uleb128 0x34
+ 2066 0096 00       		.byte	0
+ 2067 0097 03       		.uleb128 0x3
+ 2068 0098 0E       		.uleb128 0xe
+ 2069 0099 3A       		.uleb128 0x3a
+ 2070 009a 0B       		.uleb128 0xb
+ 2071 009b 3B       		.uleb128 0x3b
+ 2072 009c 0B       		.uleb128 0xb
+ 2073 009d 49       		.uleb128 0x49
+ 2074 009e 13       		.uleb128 0x13
+ 2075 009f 02       		.uleb128 0x2
+ 2076 00a0 18       		.uleb128 0x18
+ 2077 00a1 00       		.byte	0
+ 2078 00a2 00       		.byte	0
+ 2079 00a3 0C       		.uleb128 0xc
+ 2080 00a4 898201   		.uleb128 0x4109
+ 2081 00a7 01       		.byte	0x1
+ 2082 00a8 11       		.uleb128 0x11
+ 2083 00a9 01       		.uleb128 0x1
+ 2084 00aa 31       		.uleb128 0x31
+ 2085 00ab 13       		.uleb128 0x13
+ 2086 00ac 01       		.uleb128 0x1
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 41
+
+
+ 2087 00ad 13       		.uleb128 0x13
+ 2088 00ae 00       		.byte	0
+ 2089 00af 00       		.byte	0
+ 2090 00b0 0D       		.uleb128 0xd
+ 2091 00b1 8A8201   		.uleb128 0x410a
+ 2092 00b4 00       		.byte	0
+ 2093 00b5 02       		.uleb128 0x2
+ 2094 00b6 18       		.uleb128 0x18
+ 2095 00b7 9142     		.uleb128 0x2111
+ 2096 00b9 18       		.uleb128 0x18
+ 2097 00ba 00       		.byte	0
+ 2098 00bb 00       		.byte	0
+ 2099 00bc 0E       		.uleb128 0xe
+ 2100 00bd 898201   		.uleb128 0x4109
+ 2101 00c0 01       		.byte	0x1
+ 2102 00c1 11       		.uleb128 0x11
+ 2103 00c2 01       		.uleb128 0x1
+ 2104 00c3 31       		.uleb128 0x31
+ 2105 00c4 13       		.uleb128 0x13
+ 2106 00c5 00       		.byte	0
+ 2107 00c6 00       		.byte	0
+ 2108 00c7 0F       		.uleb128 0xf
+ 2109 00c8 01       		.uleb128 0x1
+ 2110 00c9 01       		.byte	0x1
+ 2111 00ca 49       		.uleb128 0x49
+ 2112 00cb 13       		.uleb128 0x13
+ 2113 00cc 01       		.uleb128 0x1
+ 2114 00cd 13       		.uleb128 0x13
+ 2115 00ce 00       		.byte	0
+ 2116 00cf 00       		.byte	0
+ 2117 00d0 10       		.uleb128 0x10
+ 2118 00d1 21       		.uleb128 0x21
+ 2119 00d2 00       		.byte	0
+ 2120 00d3 49       		.uleb128 0x49
+ 2121 00d4 13       		.uleb128 0x13
+ 2122 00d5 2F       		.uleb128 0x2f
+ 2123 00d6 0B       		.uleb128 0xb
+ 2124 00d7 00       		.byte	0
+ 2125 00d8 00       		.byte	0
+ 2126 00d9 11       		.uleb128 0x11
+ 2127 00da 05       		.uleb128 0x5
+ 2128 00db 00       		.byte	0
+ 2129 00dc 03       		.uleb128 0x3
+ 2130 00dd 08       		.uleb128 0x8
+ 2131 00de 3A       		.uleb128 0x3a
+ 2132 00df 0B       		.uleb128 0xb
+ 2133 00e0 3B       		.uleb128 0x3b
+ 2134 00e1 0B       		.uleb128 0xb
+ 2135 00e2 49       		.uleb128 0x49
+ 2136 00e3 13       		.uleb128 0x13
+ 2137 00e4 02       		.uleb128 0x2
+ 2138 00e5 17       		.uleb128 0x17
+ 2139 00e6 00       		.byte	0
+ 2140 00e7 00       		.byte	0
+ 2141 00e8 12       		.uleb128 0x12
+ 2142 00e9 05       		.uleb128 0x5
+ 2143 00ea 00       		.byte	0
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 42
+
+
+ 2144 00eb 03       		.uleb128 0x3
+ 2145 00ec 0E       		.uleb128 0xe
+ 2146 00ed 3A       		.uleb128 0x3a
+ 2147 00ee 0B       		.uleb128 0xb
+ 2148 00ef 3B       		.uleb128 0x3b
+ 2149 00f0 0B       		.uleb128 0xb
+ 2150 00f1 49       		.uleb128 0x49
+ 2151 00f2 13       		.uleb128 0x13
+ 2152 00f3 02       		.uleb128 0x2
+ 2153 00f4 17       		.uleb128 0x17
+ 2154 00f5 00       		.byte	0
+ 2155 00f6 00       		.byte	0
+ 2156 00f7 13       		.uleb128 0x13
+ 2157 00f8 0B       		.uleb128 0xb
+ 2158 00f9 01       		.byte	0x1
+ 2159 00fa 11       		.uleb128 0x11
+ 2160 00fb 01       		.uleb128 0x1
+ 2161 00fc 12       		.uleb128 0x12
+ 2162 00fd 06       		.uleb128 0x6
+ 2163 00fe 00       		.byte	0
+ 2164 00ff 00       		.byte	0
+ 2165 0100 14       		.uleb128 0x14
+ 2166 0101 34       		.uleb128 0x34
+ 2167 0102 00       		.byte	0
+ 2168 0103 03       		.uleb128 0x3
+ 2169 0104 08       		.uleb128 0x8
+ 2170 0105 3A       		.uleb128 0x3a
+ 2171 0106 0B       		.uleb128 0xb
+ 2172 0107 3B       		.uleb128 0x3b
+ 2173 0108 0B       		.uleb128 0xb
+ 2174 0109 49       		.uleb128 0x49
+ 2175 010a 13       		.uleb128 0x13
+ 2176 010b 02       		.uleb128 0x2
+ 2177 010c 17       		.uleb128 0x17
+ 2178 010d 00       		.byte	0
+ 2179 010e 00       		.byte	0
+ 2180 010f 15       		.uleb128 0x15
+ 2181 0110 34       		.uleb128 0x34
+ 2182 0111 00       		.byte	0
+ 2183 0112 03       		.uleb128 0x3
+ 2184 0113 0E       		.uleb128 0xe
+ 2185 0114 3A       		.uleb128 0x3a
+ 2186 0115 0B       		.uleb128 0xb
+ 2187 0116 3B       		.uleb128 0x3b
+ 2188 0117 0B       		.uleb128 0xb
+ 2189 0118 49       		.uleb128 0x49
+ 2190 0119 13       		.uleb128 0x13
+ 2191 011a 3F       		.uleb128 0x3f
+ 2192 011b 19       		.uleb128 0x19
+ 2193 011c 02       		.uleb128 0x2
+ 2194 011d 18       		.uleb128 0x18
+ 2195 011e 00       		.byte	0
+ 2196 011f 00       		.byte	0
+ 2197 0120 16       		.uleb128 0x16
+ 2198 0121 34       		.uleb128 0x34
+ 2199 0122 00       		.byte	0
+ 2200 0123 03       		.uleb128 0x3
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 43
+
+
+ 2201 0124 0E       		.uleb128 0xe
+ 2202 0125 3A       		.uleb128 0x3a
+ 2203 0126 0B       		.uleb128 0xb
+ 2204 0127 3B       		.uleb128 0x3b
+ 2205 0128 05       		.uleb128 0x5
+ 2206 0129 49       		.uleb128 0x49
+ 2207 012a 13       		.uleb128 0x13
+ 2208 012b 3F       		.uleb128 0x3f
+ 2209 012c 19       		.uleb128 0x19
+ 2210 012d 3C       		.uleb128 0x3c
+ 2211 012e 19       		.uleb128 0x19
+ 2212 012f 00       		.byte	0
+ 2213 0130 00       		.byte	0
+ 2214 0131 17       		.uleb128 0x17
+ 2215 0132 2E       		.uleb128 0x2e
+ 2216 0133 00       		.byte	0
+ 2217 0134 3F       		.uleb128 0x3f
+ 2218 0135 19       		.uleb128 0x19
+ 2219 0136 3C       		.uleb128 0x3c
+ 2220 0137 19       		.uleb128 0x19
+ 2221 0138 6E       		.uleb128 0x6e
+ 2222 0139 0E       		.uleb128 0xe
+ 2223 013a 03       		.uleb128 0x3
+ 2224 013b 0E       		.uleb128 0xe
+ 2225 013c 3A       		.uleb128 0x3a
+ 2226 013d 0B       		.uleb128 0xb
+ 2227 013e 3B       		.uleb128 0x3b
+ 2228 013f 0B       		.uleb128 0xb
+ 2229 0140 00       		.byte	0
+ 2230 0141 00       		.byte	0
+ 2231 0142 00       		.byte	0
+ 2232              		.section	.debug_loc,"",%progbits
+ 2233              	.Ldebug_loc0:
+ 2234              	.LLST0:
+ 2235 0000 00000000 		.4byte	.LVL4
+ 2236 0004 0B000000 		.4byte	.LVL5-1
+ 2237 0008 0100     		.2byte	0x1
+ 2238 000a 50       		.byte	0x50
+ 2239 000b 0B000000 		.4byte	.LVL5-1
+ 2240 000f 2C000000 		.4byte	.LFE73
+ 2241 0013 0400     		.2byte	0x4
+ 2242 0015 F3       		.byte	0xf3
+ 2243 0016 01       		.uleb128 0x1
+ 2244 0017 50       		.byte	0x50
+ 2245 0018 9F       		.byte	0x9f
+ 2246 0019 00000000 		.4byte	0
+ 2247 001d 00000000 		.4byte	0
+ 2248              	.LLST1:
+ 2249 0021 00000000 		.4byte	.LVL4
+ 2250 0025 0B000000 		.4byte	.LVL5-1
+ 2251 0029 0100     		.2byte	0x1
+ 2252 002b 51       		.byte	0x51
+ 2253 002c 0B000000 		.4byte	.LVL5-1
+ 2254 0030 2C000000 		.4byte	.LFE73
+ 2255 0034 0400     		.2byte	0x4
+ 2256 0036 F3       		.byte	0xf3
+ 2257 0037 01       		.uleb128 0x1
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 44
+
+
+ 2258 0038 51       		.byte	0x51
+ 2259 0039 9F       		.byte	0x9f
+ 2260 003a 00000000 		.4byte	0
+ 2261 003e 00000000 		.4byte	0
+ 2262              	.LLST2:
+ 2263 0042 00000000 		.4byte	.LVL4
+ 2264 0046 0B000000 		.4byte	.LVL5-1
+ 2265 004a 0100     		.2byte	0x1
+ 2266 004c 52       		.byte	0x52
+ 2267 004d 0B000000 		.4byte	.LVL5-1
+ 2268 0051 2C000000 		.4byte	.LFE73
+ 2269 0055 0400     		.2byte	0x4
+ 2270 0057 F3       		.byte	0xf3
+ 2271 0058 01       		.uleb128 0x1
+ 2272 0059 52       		.byte	0x52
+ 2273 005a 9F       		.byte	0x9f
+ 2274 005b 00000000 		.4byte	0
+ 2275 005f 00000000 		.4byte	0
+ 2276              	.LLST3:
+ 2277 0063 00000000 		.4byte	.LVL4
+ 2278 0067 0B000000 		.4byte	.LVL5-1
+ 2279 006b 0100     		.2byte	0x1
+ 2280 006d 53       		.byte	0x53
+ 2281 006e 0B000000 		.4byte	.LVL5-1
+ 2282 0072 2C000000 		.4byte	.LFE73
+ 2283 0076 0400     		.2byte	0x4
+ 2284 0078 F3       		.byte	0xf3
+ 2285 0079 01       		.uleb128 0x1
+ 2286 007a 53       		.byte	0x53
+ 2287 007b 9F       		.byte	0x9f
+ 2288 007c 00000000 		.4byte	0
+ 2289 0080 00000000 		.4byte	0
+ 2290              	.LLST4:
+ 2291 0084 00000000 		.4byte	.LVL26
+ 2292 0088 08000000 		.4byte	.LVL28
+ 2293 008c 0100     		.2byte	0x1
+ 2294 008e 50       		.byte	0x50
+ 2295 008f 08000000 		.4byte	.LVL28
+ 2296 0093 14000000 		.4byte	.LFE71
+ 2297 0097 0100     		.2byte	0x1
+ 2298 0099 55       		.byte	0x55
+ 2299 009a 00000000 		.4byte	0
+ 2300 009e 00000000 		.4byte	0
+ 2301              	.LLST5:
+ 2302 00a2 04000000 		.4byte	.LVL27
+ 2303 00a6 08000000 		.4byte	.LVL28
+ 2304 00aa 0200     		.2byte	0x2
+ 2305 00ac 30       		.byte	0x30
+ 2306 00ad 9F       		.byte	0x9f
+ 2307 00ae 08000000 		.4byte	.LVL28
+ 2308 00b2 14000000 		.4byte	.LFE71
+ 2309 00b6 0100     		.2byte	0x1
+ 2310 00b8 54       		.byte	0x54
+ 2311 00b9 00000000 		.4byte	0
+ 2312 00bd 00000000 		.4byte	0
+ 2313              		.section	.debug_aranges,"",%progbits
+ 2314 0000 64000000 		.4byte	0x64
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 45
+
+
+ 2315 0004 0200     		.2byte	0x2
+ 2316 0006 00000000 		.4byte	.Ldebug_info0
+ 2317 000a 04       		.byte	0x4
+ 2318 000b 00       		.byte	0
+ 2319 000c 0000     		.2byte	0
+ 2320 000e 0000     		.2byte	0
+ 2321 0010 00000000 		.4byte	.LFB64
+ 2322 0014 08000000 		.4byte	.LFE64-.LFB64
+ 2323 0018 00000000 		.4byte	.LFB65
+ 2324 001c 1C000000 		.4byte	.LFE65-.LFB65
+ 2325 0020 00000000 		.4byte	.LFB66
+ 2326 0024 3C000000 		.4byte	.LFE66-.LFB66
+ 2327 0028 00000000 		.4byte	.LFB67
+ 2328 002c 10000000 		.4byte	.LFE67-.LFB67
+ 2329 0030 00000000 		.4byte	.LFB73
+ 2330 0034 2C000000 		.4byte	.LFE73-.LFB73
+ 2331 0038 00000000 		.4byte	.LFB68
+ 2332 003c 74000000 		.4byte	.LFE68-.LFB68
+ 2333 0040 00000000 		.4byte	.LFB69
+ 2334 0044 74000000 		.4byte	.LFE69-.LFB69
+ 2335 0048 00000000 		.4byte	.LFB71
+ 2336 004c 14000000 		.4byte	.LFE71-.LFB71
+ 2337 0050 00000000 		.4byte	.LFB72
+ 2338 0054 24000000 		.4byte	.LFE72-.LFB72
+ 2339 0058 00000000 		.4byte	.LFB70
+ 2340 005c D4000000 		.4byte	.LFE70-.LFB70
+ 2341 0060 00000000 		.4byte	0
+ 2342 0064 00000000 		.4byte	0
+ 2343              		.section	.debug_ranges,"",%progbits
+ 2344              	.Ldebug_ranges0:
+ 2345 0000 00000000 		.4byte	.LFB64
+ 2346 0004 08000000 		.4byte	.LFE64
+ 2347 0008 00000000 		.4byte	.LFB65
+ 2348 000c 1C000000 		.4byte	.LFE65
+ 2349 0010 00000000 		.4byte	.LFB66
+ 2350 0014 3C000000 		.4byte	.LFE66
+ 2351 0018 00000000 		.4byte	.LFB67
+ 2352 001c 10000000 		.4byte	.LFE67
+ 2353 0020 00000000 		.4byte	.LFB73
+ 2354 0024 2C000000 		.4byte	.LFE73
+ 2355 0028 00000000 		.4byte	.LFB68
+ 2356 002c 74000000 		.4byte	.LFE68
+ 2357 0030 00000000 		.4byte	.LFB69
+ 2358 0034 74000000 		.4byte	.LFE69
+ 2359 0038 00000000 		.4byte	.LFB71
+ 2360 003c 14000000 		.4byte	.LFE71
+ 2361 0040 00000000 		.4byte	.LFB72
+ 2362 0044 24000000 		.4byte	.LFE72
+ 2363 0048 00000000 		.4byte	.LFB70
+ 2364 004c D4000000 		.4byte	.LFE70
+ 2365 0050 00000000 		.4byte	0
+ 2366 0054 00000000 		.4byte	0
+ 2367              		.section	.debug_line,"",%progbits
+ 2368              	.Ldebug_line0:
+ 2369 0000 F9020000 		.section	.debug_str,"MS",%progbits,1
+ 2369      02001002 
+ 2369      00000201 
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 46
+
+
+ 2369      FB0E0D00 
+ 2369      01010101 
+ 2370              	.LASF46:
+ 2371 0000 61325F57 		.ascii	"a2_Write\000"
+ 2371      72697465 
+ 2371      00
+ 2372              	.LASF4:
+ 2373 0009 5F5F7569 		.ascii	"__uint8_t\000"
+ 2373      6E74385F 
+ 2373      7400
+ 2374              	.LASF42:
+ 2375 0013 54696D65 		.ascii	"Timer_1_Start\000"
+ 2375      725F315F 
+ 2375      53746172 
+ 2375      7400
+ 2376              	.LASF29:
+ 2377 0021 66756C6C 		.ascii	"fullDrive\000"
+ 2377      44726976 
+ 2377      6500
+ 2378              	.LASF40:
+ 2379 002b 63757272 		.ascii	"currentStep\000"
+ 2379      656E7453 
+ 2379      74657000 
+ 2380              	.LASF5:
+ 2381 0037 5F5F696E 		.ascii	"__int32_t\000"
+ 2381      7433325F 
+ 2381      7400
+ 2382              	.LASF53:
+ 2383 0041 44726976 		.ascii	"Drive\000"
+ 2383      6500
+ 2384              	.LASF43:
+ 2385 0047 736E7072 		.ascii	"snprintf\000"
+ 2385      696E7466 
+ 2385      00
+ 2386              	.LASF24:
+ 2387 0050 646F7562 		.ascii	"double\000"
+ 2387      6C6500
+ 2388              	.LASF19:
+ 2389 0057 57617665 		.ascii	"WaveDrive\000"
+ 2389      44726976 
+ 2389      6500
+ 2390              	.LASF37:
+ 2391 0061 64697265 		.ascii	"direction\000"
+ 2391      6374696F 
+ 2391      6E00
+ 2392              	.LASF13:
+ 2393 006b 696E7433 		.ascii	"int32_t\000"
+ 2393      325F7400 
+ 2394              	.LASF23:
+ 2395 0073 666C6F61 		.ascii	"float\000"
+ 2395      7400
+ 2396              	.LASF25:
+ 2397 0079 696E6974 		.ascii	"initStepperMotor\000"
+ 2397      53746570 
+ 2397      7065724D 
+ 2397      6F746F72 
+ 2397      00
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 47
+
+
+ 2398              	.LASF1:
+ 2399 008a 756E7369 		.ascii	"unsigned char\000"
+ 2399      676E6564 
+ 2399      20636861 
+ 2399      7200
+ 2400              	.LASF50:
+ 2401 0098 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2401      43313120 
+ 2401      352E342E 
+ 2401      31203230 
+ 2401      31363036 
+ 2402 00cb 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 2402      20726576 
+ 2402      6973696F 
+ 2402      6E203233 
+ 2402      37373135 
+ 2403 00fe 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2403      66756E63 
+ 2403      74696F6E 
+ 2403      2D736563 
+ 2403      74696F6E 
+ 2404              	.LASF7:
+ 2405 0126 5F5F7569 		.ascii	"__uint32_t\000"
+ 2405      6E743332 
+ 2405      5F7400
+ 2406              	.LASF21:
+ 2407 0131 48616C66 		.ascii	"HalfDrive\000"
+ 2407      44726976 
+ 2407      6500
+ 2408              	.LASF8:
+ 2409 013b 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2409      20756E73 
+ 2409      69676E65 
+ 2409      6420696E 
+ 2409      7400
+ 2410              	.LASF48:
+ 2411 014d 62325F57 		.ascii	"b2_Write\000"
+ 2411      72697465 
+ 2411      00
+ 2412              	.LASF3:
+ 2413 0156 73686F72 		.ascii	"short unsigned int\000"
+ 2413      7420756E 
+ 2413      7369676E 
+ 2413      65642069 
+ 2413      6E7400
+ 2414              	.LASF27:
+ 2415 0169 73746F70 		.ascii	"stop\000"
+ 2415      00
+ 2416              	.LASF41:
+ 2417 016e 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2417      52784275 
+ 2417      66666572 
+ 2417      00
+ 2418              	.LASF45:
+ 2419 017b 61315F57 		.ascii	"a1_Write\000"
+ 2419      72697465 
+ 2419      00
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 48
+
+
+ 2420              	.LASF32:
+ 2421 0184 73746570 		.ascii	"steps\000"
+ 2421      7300
+ 2422              	.LASF2:
+ 2423 018a 73686F72 		.ascii	"short int\000"
+ 2423      7420696E 
+ 2423      7400
+ 2424              	.LASF28:
+ 2425 0194 73657453 		.ascii	"setStep\000"
+ 2425      74657000 
+ 2426              	.LASF52:
+ 2427 019c 433A5C55 		.ascii	"C:\\Users\\mrgas\\Downloads\\DC-Motor-PWM\\Stepper "
+ 2427      73657273 
+ 2427      5C6D7267 
+ 2427      61735C44 
+ 2427      6F776E6C 
+ 2428 01ca 4D6F746F 		.ascii	"Motor.cydsn\000"
+ 2428      722E6379 
+ 2428      64736E00 
+ 2429              	.LASF11:
+ 2430 01d6 756E7369 		.ascii	"unsigned int\000"
+ 2430      676E6564 
+ 2430      20696E74 
+ 2430      00
+ 2431              	.LASF10:
+ 2432 01e3 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2432      206C6F6E 
+ 2432      6720756E 
+ 2432      7369676E 
+ 2432      65642069 
+ 2433              	.LASF12:
+ 2434 01fa 75696E74 		.ascii	"uint8_t\000"
+ 2434      385F7400 
+ 2435              	.LASF31:
+ 2436 0202 73746570 		.ascii	"step\000"
+ 2436      00
+ 2437              	.LASF47:
+ 2438 0207 62315F57 		.ascii	"b1_Write\000"
+ 2438      72697465 
+ 2438      00
+ 2439              	.LASF54:
+ 2440 0210 696E6372 		.ascii	"increaseSpeed\000"
+ 2440      65617365 
+ 2440      53706565 
+ 2440      6400
+ 2441              	.LASF36:
+ 2442 021e 73706565 		.ascii	"speed\000"
+ 2442      6400
+ 2443              	.LASF16:
+ 2444 0224 73697A65 		.ascii	"sizetype\000"
+ 2444      74797065 
+ 2444      00
+ 2445              	.LASF9:
+ 2446 022d 6C6F6E67 		.ascii	"long long int\000"
+ 2446      206C6F6E 
+ 2446      6720696E 
+ 2446      7400
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 49
+
+
+ 2447              	.LASF20:
+ 2448 023b 46756C6C 		.ascii	"FullDrive\000"
+ 2448      44726976 
+ 2448      6500
+ 2449              	.LASF35:
+ 2450 0245 68616C66 		.ascii	"halfDrive\000"
+ 2450      44726976 
+ 2450      6500
+ 2451              	.LASF17:
+ 2452 024f 63686172 		.ascii	"char\000"
+ 2452      00
+ 2453              	.LASF51:
+ 2454 0254 53746570 		.ascii	"StepperMotor.c\000"
+ 2454      7065724D 
+ 2454      6F746F72 
+ 2454      2E6300
+ 2455              	.LASF26:
+ 2456 0263 64656372 		.ascii	"decreaseSpeed\000"
+ 2456      65617365 
+ 2456      53706565 
+ 2456      6400
+ 2457              	.LASF39:
+ 2458 0271 63757272 		.ascii	"currentDrive\000"
+ 2458      656E7444 
+ 2458      72697665 
+ 2458      00
+ 2459              	.LASF22:
+ 2460 027e 4F6E6552 		.ascii	"OneRotation\000"
+ 2460      6F746174 
+ 2460      696F6E00 
+ 2461              	.LASF33:
+ 2462 028a 62756666 		.ascii	"buffer\000"
+ 2462      657200
+ 2463              	.LASF14:
+ 2464 0291 75696E74 		.ascii	"uint32_t\000"
+ 2464      33325F74 
+ 2464      00
+ 2465              	.LASF6:
+ 2466 029a 6C6F6E67 		.ascii	"long int\000"
+ 2466      20696E74 
+ 2466      00
+ 2467              	.LASF15:
+ 2468 02a3 6C6F6E67 		.ascii	"long double\000"
+ 2468      20646F75 
+ 2468      626C6500 
+ 2469              	.LASF0:
+ 2470 02af 7369676E 		.ascii	"signed char\000"
+ 2470      65642063 
+ 2470      68617200 
+ 2471              	.LASF18:
+ 2472 02bb 4E6F6E65 		.ascii	"None\000"
+ 2472      00
+ 2473              	.LASF44:
+ 2474 02c0 55415254 		.ascii	"UART_1_PutString\000"
+ 2474      5F315F50 
+ 2474      75745374 
+ 2474      72696E67 
+ARM GAS  C:\Users\mrgas\AppData\Local\Temp\cc68osxc.s 			page 50
+
+
+ 2474      00
+ 2475              	.LASF38:
+ 2476 02d1 5F426F6F 		.ascii	"_Bool\000"
+ 2476      6C00
+ 2477              	.LASF49:
+ 2478 02d7 43794465 		.ascii	"CyDelay\000"
+ 2478      6C617900 
+ 2479              	.LASF30:
+ 2480 02df 77617665 		.ascii	"waveDrive\000"
+ 2480      44726976 
+ 2480      6500
+ 2481              	.LASF34:
+ 2482 02e9 6F6E6552 		.ascii	"oneRotaion\000"
+ 2482      6F746169 
+ 2482      6F6E00
+ 2483              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
